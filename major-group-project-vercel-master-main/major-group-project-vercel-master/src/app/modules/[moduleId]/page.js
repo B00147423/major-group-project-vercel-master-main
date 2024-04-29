@@ -19,7 +19,6 @@ const ModulePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [email, setEmail] = useState('');
-
   useEffect(() => {
     if (router.query && router.query.moduleId) {
       const { moduleId } = router.query;
@@ -27,35 +26,6 @@ const ModulePage = () => {
       fetchPostsByModule(moduleId);
     }
   }, [router.query]);
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const userId = getUserIdFromCookies();
-      if (!userId) {
-        console.log("User ID not found.");
-        return;
-      }
-  
-      try {
-        const res = await fetch(`/api/getUserInfo?userId=${userId}`);
-  
-        if (!res.ok) {
-          throw new Error("Failed to fetch user information");
-        }
-  
-        const { user } = await res.json();
-        if (user && user.length > 0) {
-          const userInfo = user[0]; // Assuming the result is an array with a single user object
-  
-          setEmail(userInfo.email);
-        }
-      } catch (error) {
-        console.error("Error fetching user information:", error);
-      }
-    };
-  
-    fetchUserInfo();
-  }, []);
 
   async function runDBCallAsync(url, formData){
     try {
@@ -90,6 +60,35 @@ const ModulePage = () => {
     const usernameFromCookies = getUsernameFromCookies();
     console.log('Username from cookies:', usernameFromCookies);
     setUsername(usernameFromCookies);
+  }, []);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const userId = getUserIdFromCookies();
+      if (!userId) {
+        console.log("User ID not found.");
+        return;
+      }
+  
+      try {
+        const res = await fetch(`/api/getUserInfo?userId=${userId}`);
+  
+        if (!res.ok) {
+          throw new Error("Failed to fetch user information");
+        }
+  
+        const { user } = await res.json();
+        if (user && user.length > 0) {
+          const userInfo = user[0]; // Assuming the result is an array with a single user object
+  
+          setEmail(userInfo.email);
+        }
+      } catch (error) {
+        console.error("Error fetching user information:", error);
+      }
+    };
+  
+    fetchUserInfo();
   }, []);
 
   useEffect(() => {
@@ -149,12 +148,17 @@ const ModulePage = () => {
   };
 
   const handleCreatePost = () => {
-    localStorage.setItem('currentModuleId', moduleId);
+    if (typeof window !== 'undefined'){
+      localStorage.setItem('currentModuleId', moduleId);
+    } 
     router.push('/createPost');
   };
 
   const handleCreateAnnouncement = () => {
-    localStorage.setItem('currentModuleId', moduleId);
+    if (typeof window !=='undefined'){
+      localStorage.setItem('currentModuleId', moduleId);
+    }
+    
     router.push('/createAnnouncement');
   };
 
@@ -247,6 +251,7 @@ const onCommentUpdate = async (commentId, newContent) => {
       )
     );
 
+
   } catch (error) {
     console.error('Error updating comment:', error.message);
   }
@@ -256,7 +261,7 @@ const handleViewPost = (post) => {
 
   setSelectedPost(post);
   setIsModalOpen(true);
-  fetch('http://localhost:3000/api/getCommentsById')
+  fetch('/api/getCommentsById')
   .then((res) => res.json())
   .then((comments) => {
     setComments(comments);
@@ -294,6 +299,23 @@ const handleDeleteComment = async (commentId) => {
   }
 };
 
+const handleDeletePost = async (postId) => {
+  try {
+    const response = await fetch(`/api/deletePost?postId=${postId}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      console.log('Post deleted successfully');
+      setPosts(prevPosts => prevPosts.filter(post => post._id !== postId));
+    } else {
+      console.error('Failed to delete post');
+    }
+  } catch (error) {
+    console.error('Error deleting post:', error);
+  }
+};
+
 return (
   <Layout>
     <div className='container'>
@@ -310,7 +332,6 @@ return (
                 Create Announcement
               </Button>
               )}
-            
           </center>
           <br />
           <br />
@@ -335,16 +356,20 @@ return (
           {posts.length > 0 ? (
             posts.map((post, index) => (
               <div key={post._id || index} className="post" id={`post-${post._id || index}`}>
-                <h4>creator: {post.poster}</h4>
+                <h4>Creator: {post.poster}</h4>
                 <h4>{post.title}</h4>
                 <p>{post.content}</p>
                 <button onClick={() => handleViewPost(post)}>
                   View Post
                 </button>
+                {/* Add delete button */}
+                {(username === post.poster || email === moduleInfo.lecturer || email === moduleInfo.moderator) && (
+                  <button onClick={() => handleDeletePost(post._id)}>Delete</button>
+                )}
               </div>
             ))
           ) : (
-            <p>No posts to display</p>
+           <center> <p>No posts to display</p></center>
           )}
 
           {isModalOpen && (
@@ -356,10 +381,11 @@ return (
                 <hr/>
                 <div className="forum-container">
                   <h3>Comments:</h3>
+                  <div className="comment-list">
                   {comments
                       .filter((comment) => comment.postId === selectedPost._id)
                       .map((comment, index) => (
-                    <Comment
+                        <Comment
                         key={comment._id || index}
                         comment={comment}
                         onCommentUpdate={onCommentUpdate}
@@ -369,6 +395,7 @@ return (
                         id={`comment-${comment._id || index}`}
                     />
                       ))}
+                </div>
                 </div>
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
                 <p>{username}</p> {/* Display username here */}
@@ -388,7 +415,7 @@ return (
           )}
         </div>
       ) : (
-        <p>Loading module details...</p>
+       <center><p>Loading module details...</p></center> 
       )}
     </div>
   </Layout>
@@ -396,4 +423,3 @@ return (
 };
 
 export default ModulePage;
-
