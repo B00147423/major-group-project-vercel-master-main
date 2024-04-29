@@ -5,6 +5,9 @@ import React, { useState, useEffect } from 'react';
 import Layout from "../Components/Layout";
 import '../css/createPost.css';
 import { useRouter } from 'next/navigation';
+
+
+
 async function runDBCallAsync(url, formData){
 // Send a POST request
     try {
@@ -43,7 +46,11 @@ async function runDBCallAsync(url, formData){
 
 const createPost = () => {
     const [username, setUsername] = useState('');
+    const [moduleId, setModuleId] = useState('');
+    if (typeof localStorage !== "undefined"){
       const moduleId = localStorage.getItem('currentModuleId');
+      setModuleId(moduleId);
+    }
     const router = useRouter(); // Using useRouter for navigation
 
     
