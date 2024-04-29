@@ -252,6 +252,7 @@ const onCommentUpdate = async (commentId, newContent) => {
       )
     );
 
+
   } catch (error) {
     console.error('Error updating comment:', error.message);
   }
@@ -385,7 +386,7 @@ return (
                   {comments
                       .filter((comment) => comment.postId === selectedPost._id)
                       .map((comment, index) => (
-                    <Comment
+                        <Comment
                         key={comment._id || index}
                         comment={comment}
                         onCommentUpdate={onCommentUpdate}

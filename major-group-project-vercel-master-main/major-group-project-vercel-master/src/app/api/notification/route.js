@@ -11,7 +11,8 @@ export async function GET(request) {
         await client.connect();
         const db = client.db(dbName);
 
-        const cookies = cookie.parse(request.cookies || '');
+        const cookiesString = request.cookies || '';
+        const cookies = typeof cookiesString === 'string' ? cookie.parse(cookiesString) : {};
         const currentUsername = cookies.username;
         console.log('Current username from cookie:', currentUsername);
 
@@ -37,4 +38,3 @@ export async function GET(request) {
         await client.close();
     }
 }
-
