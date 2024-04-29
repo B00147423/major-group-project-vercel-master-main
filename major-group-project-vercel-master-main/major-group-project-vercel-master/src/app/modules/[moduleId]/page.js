@@ -33,8 +33,6 @@ const ModulePage = () => {
     }
   }, [router.query]);
 
-  // Other useEffect hooks...
-
 
   async function runDBCallAsync(url, formData){
     try {
