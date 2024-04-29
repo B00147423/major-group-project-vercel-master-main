@@ -65,7 +65,7 @@ const Header = ({ setSearchResults }) => {
     const fetchNotifications = async () => {
       const username = getUsernameFromCookies();
       try {
-        const response = await fetch(`/api/notification?username=${username}`);
+        const response = await fetch(`/api/notification?username=${encodeURIComponent(username)}`);
         if (!response.ok) {
           throw new Error('Failed to fetch notifications');
         }
@@ -76,7 +76,7 @@ const Header = ({ setSearchResults }) => {
         console.error('Error fetching notifications:', error);
       }
     };
-
+  
     fetchNotifications();
   }, []);
 
