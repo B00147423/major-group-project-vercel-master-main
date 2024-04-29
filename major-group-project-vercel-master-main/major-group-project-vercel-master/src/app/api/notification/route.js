@@ -11,10 +11,11 @@ export async function GET(request) {
         await client.connect();
         const db = client.db(dbName);
 
-            const cookies = cookie.parse(request.headers.get('cookie') || '');
-            const currentUsername = cookies.username;
-            console.log('Current username from cookie:', currentUsername);
-        
+        // Parse the request cookies
+        const cookies = cookie.parse(request.headers.get('cookie') || '');
+        const currentUsername = cookies.username;
+        console.log('Current username from cookie:', currentUsername);
+
         // Ensure that a username is available
         if (!currentUsername) {
             throw new Error('Username not found in cookies');
