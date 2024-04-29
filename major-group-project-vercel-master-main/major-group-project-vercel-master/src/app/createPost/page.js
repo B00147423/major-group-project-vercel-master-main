@@ -43,9 +43,7 @@ async function runDBCallAsync(url, formData){
 
 const createPost = () => {
     const [username, setUsername] = useState('');
-    if (typeof localStorage !== "undefined"){
       const moduleId = localStorage.getItem('currentModuleId');
-    }
     const router = useRouter(); // Using useRouter for navigation
 
     
