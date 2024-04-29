@@ -50,7 +50,19 @@ const ModulePage = () => {
       throw error; // Re-throw the error to be handled by the caller
     }
   }
-
+  useEffect(() => {
+    if (selectedPost) {
+      const postId = selectedPost._id;
+      fetch(`/api/getCommentsById?postId=${postId}`)
+        .then((res) => res.json())
+        .then((comments) => {
+          setComments(comments);
+        })
+        .catch((error) => {
+          console.error('Error fetching comments:', error);
+        });
+    }
+  }, [selectedPost]);
   useEffect(() => {
     const getUsernameFromCookies = () => {
       const allCookies = document.cookie.split('; ');
@@ -258,17 +270,8 @@ const onCommentUpdate = async (commentId, newContent) => {
 };
 
 const handleViewPost = (post) => {
-
   setSelectedPost(post);
   setIsModalOpen(true);
-  fetch('/api/getCommentsById')
-  .then((res) => res.json())
-  .then((comments) => {
-    setComments(comments);
-  })
-  .catch((error) => {
-    console.error('Error fetching comments:', error);
-  });
 };
 
 const closeModal = () => {
