@@ -1,11 +1,10 @@
 // components/Header.js
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation'; // Use 'next/router' instead of 'next/navigation'
-import Link from 'next/link'; // Import Link from next/link
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import '../css/header.css';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import SvgIcon from '@mui/material/SvgIcon';
 import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
 import SettingsIcon from '@mui/icons-material/Settings';
