@@ -9,6 +9,7 @@ import Comment from '../../Components/Comments';
 
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
+  const [moduleId, setModuleId] = useState(null);
   const [threads, setThreads] = useState([]);
   const [posts, setPosts] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
@@ -24,9 +25,9 @@ const ModulePage = () => {
   useEffect(() => {
     if (router.query && router.query.moduleId) {
       const { moduleId } = router.query;
-      console.log('Module ID:', moduleId); // Log to check if moduleId is correctly retrieved
-      moduleId(moduleId); // Set the moduleId state variable
-      fetchPostsByModule(moduleId); // Fetch module details based on the moduleId
+      console.log('Module ID:', moduleId);
+      setModuleId(moduleId); // Set the moduleId state variable
+      fetchPostsByModule(moduleId);
     }
   }, [router.query]);
 
