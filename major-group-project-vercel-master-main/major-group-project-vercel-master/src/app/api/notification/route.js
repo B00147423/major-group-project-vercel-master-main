@@ -11,14 +11,19 @@ export async function GET(request) {
         await client.connect();
         const db = client.db(dbName);
 
-        // Parse the request cookies
-        const cookies = cookie.parse(request.headers.get('cookie') || '');
-        const currentUsername = cookies.username;
-        console.log('Current username from cookie:', currentUsername);
+        let currentUsername = null;
 
-        // Ensure that a username is available
-        if (!currentUsername) {
-            throw new Error('Username not found in cookies');
+        // Check if the code is running on the server (during SSR or runtime)
+        if (request) {
+            // Parse the request cookies
+            const cookies = cookie.parse(request.headers.get('cookie') || '');
+            currentUsername = cookies.username;
+            console.log('Current username from cookie:', currentUsername);
+
+            // Ensure that a username is available
+            if (!currentUsername) {
+                throw new Error('Username not found in cookies');
+            }
         }
 
         const notificationsCollection = db.collection('notifications');
