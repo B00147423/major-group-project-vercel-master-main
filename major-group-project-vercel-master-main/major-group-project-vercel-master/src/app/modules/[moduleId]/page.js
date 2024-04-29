@@ -9,30 +9,23 @@ import Comment from '../../Components/Comments';
 
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
-  const [moduleId, setModuleId] = useState('');
   const [threads, setThreads] = useState([]);
   const [posts, setPosts] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [username, setUsername] = useState('');
+  const router = useRouter();
+  const moduleId = localStorage.getItem('currentModuleId');
   const [comments, setComments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [email, setEmail] = useState('');
-  const router = useRouter();
-
-
-
-
   useEffect(() => {
     if (router.query && router.query.moduleId) {
       const { moduleId } = router.query;
-      console.log('Module ID:', moduleId);
-      setModuleId(moduleId || ''); // Set the moduleId state variable
-      // Fetch module details based on moduleId
-      fetchModuleDetails(); // Call fetchModuleDetails here
+      setModuleId(moduleId);
+      fetchPostsByModule(moduleId);
     }
   }, [router.query]);
-
 
   async function runDBCallAsync(url, formData){
     try {
@@ -323,11 +316,6 @@ const handleDeletePost = async (postId) => {
   }
 };
 
-if (!router.query.moduleId) {
-  return <div>Loading module details...</div>;
-}
-
-
 return (
   <Layout>
     <div className='container'>
@@ -339,11 +327,11 @@ return (
             <Button variant="contained" color="primary" onClick={handleCreatePost}>
               Create Post
             </Button>
-            {email === moduleInfo.lecturer && (
-              <Button variant="contained" color="primary" onClick={handleCreateAnnouncement}>
+            {email == moduleInfo.lecturer && (
+                <Button variant="contained" color="primary" onClick={handleCreateAnnouncement}>
                 Create Announcement
               </Button>
-            )}
+              )}
           </center>
           <br />
           <br />
@@ -381,7 +369,7 @@ return (
               </div>
             ))
           ) : (
-            <center><p>No posts to display</p></center>
+           <center> <p>No posts to display</p></center>
           )}
 
           {isModalOpen && (
@@ -390,27 +378,27 @@ return (
                 <button onClick={closeModal} className="modal-close-button">X</button>
                 <h2>{selectedPost?.title}</h2>
                 <p>{selectedPost?.content}</p>
-                <hr />
+                <hr/>
                 <div className="forum-container">
                   <h3>Comments:</h3>
                   <div className="comment-list">
-                    {comments
+                  {comments
                       .filter((comment) => comment.postId === selectedPost._id)
                       .map((comment, index) => (
-                        <Comment
-                          key={comment._id || index}
-                          comment={comment}
-                          onCommentUpdate={onCommentUpdate}
-                          onReplySubmit={handleReplySubmit}
-                          onDeleteComment={handleDeleteComment}
-                          currentUser={username}
-                          id={`comment-${comment._id || index}`}
-                        />
+                    <Comment
+                        key={comment._id || index}
+                        comment={comment}
+                        onCommentUpdate={onCommentUpdate}
+                        onReplySubmit={handleReplySubmit}
+                        onDeleteComment={handleDeleteComment} // Pass the onDeleteComment function
+                        currentUser={username}
+                        id={`comment-${comment._id || index}`}
+                    />
                       ))}
-                  </div>
                 </div>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                  <p>{username}</p>
+                </div>
+                <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
+                <p>{username}</p> {/* Display username here */}
                   <TextField
                     margin="normal"
                     name="content"
@@ -418,7 +406,7 @@ return (
                     type="text"
                     id="content"
                   />
-                  <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
+                  <Button type="submit" variant="contained" sx={{mt: 3, mb: 2}}>
                     Submit
                   </Button>
                 </Box>
@@ -427,7 +415,7 @@ return (
           )}
         </div>
       ) : (
-        <center><p>Loading module details...</p></center>
+       <center><p>Loading module details...</p></center> 
       )}
     </div>
   </Layout>
