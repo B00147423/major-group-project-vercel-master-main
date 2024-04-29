@@ -148,16 +148,13 @@ const ModulePage = () => {
   };
 
   const handleCreatePost = () => {
-    if (typeof window !== 'undefined'){
       localStorage.setItem('currentModuleId', moduleId);
-    } 
     router.push('/createPost');
   };
 
   const handleCreateAnnouncement = () => {
-    if (typeof window !=='undefined'){
       localStorage.setItem('currentModuleId', moduleId);
-    }
+
     
     router.push('/createAnnouncement');
   };
