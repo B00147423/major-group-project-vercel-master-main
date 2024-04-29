@@ -16,7 +16,7 @@ export async function GET(request) {
             const cookies = cookie.parse(request.headers.get('cookie') || '');
             const currentUsername = cookies.username;
             console.log('Current username from cookie:', currentUsername);
-      
+        }
 
         // Ensure that a username is available
         if (!currentUsername) {
@@ -33,7 +33,6 @@ export async function GET(request) {
 
         // Now you have the notifications specific to the current user
         return NextResponse.json({ notifications: userNotifications }, { status: 200 });
-    }
     } catch (error) {
         console.error('Error fetching notifications:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
