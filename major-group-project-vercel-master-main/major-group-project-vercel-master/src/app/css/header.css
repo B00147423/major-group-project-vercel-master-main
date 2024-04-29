@@ -1,0 +1,231 @@
+.side-bar-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px; /* Wider sidebar */
+    background-color: #111827; /* Dark background color */
+    color: #9CA3AF; /* Gray text color for items */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the left */
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 1000;
+  }
+  
+  
+  .search-bar.expanded .search-input {
+    padding: 8px 10px 8px 35px; /* Left padding for icon when expanded */
+    width: 170px; /* Width when expanded */
+  }
+  
+  .search-input:focus {
+    width: 100%; /* Full width on focus */
+    padding-left: 35px; /* Increase padding to make space for the icon */
+  }
+  
+  
+  .search-bar {
+    position: relative;
+    width: 50px; /* Set the initial width of the search bar */
+    transition: width 0.3s ease-out; /* Transition for expanding and contracting */
+  }
+  
+  
+  .search-input {
+    width: 100%;
+    padding: 8px 10px 8px 30px;
+    border: none;
+    background-color: #1F2937;
+    color: #D1D5DB;
+    border-radius: 20px;
+    transition: all 0.3s ease-out;
+  }
+  
+  .search-input:focus {
+    width: 100%; /* Full width on focus */
+    padding-left: 35px; /* Increase padding to make space for the icon */
+  }
+  
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+  }
+  
+  /* Adjust the profile image to align left */
+  .profile-image {
+    width: 50px; /* Smaller profile image */
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    margin-left: 10px; /* Align to the left */
+    background-color: #1F2937; /* Slightly lighter than sidebar background for contrast */
+  }
+  
+  /* Adjust the menu item to include both icon and text */
+  .menu-item {
+    width: 100%;
+    padding: 10px 10px 10px 20px; /* Add left padding for icon and text alignment */
+    display: flex; /* Use flexbox to layout icon and text */
+    align-items: center; /* Align icon and text vertically */
+    text-align: left; /* Align text to the left */
+    font-size: 16px;
+    color: #D1D5DB; /* Text color */
+    cursor: pointer;
+  }
+  
+  /* Add styles for the icons */
+  .menu-item svg {
+    width: 20px; /* Smaller icon size */
+    height: 20px;
+    margin-right: 10px; /* Space between icon and text */
+    fill: currentColor; /* Icon color */
+  }
+  
+  .menu-item:not(:last-child) {
+    margin-bottom: 10px;
+  }
+  
+  .menu-item:hover {
+    background-color: #374151; /* Slightly lighter background on hover */
+    color: #FFFFFF; /* White text color on hover */
+  }
+  
+  /* Active menu item styles */
+  .menu-item.active {
+    background-color: #2563EB; /* Blue background for active item */
+    color: #FFFFFF; /* White text color for active item */
+  }
+  
+  .logo-title {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 20px;
+    margin-bottom: 20px; 
+    border-bottom: 1px solid #374151; 
+  }
+  
+  .logo-title svg {
+    width: 30px; 
+    height: 30px;
+    fill: #10B981;
+  }
+  
+  .logo-title span {
+    color: #D1D5DB; 
+    font-size: 20px; 
+    font-weight: bold;
+    margin-left: 10px; 
+  }
+  
+  .bottom-section {
+    margin-top: auto; 
+    width: 100%;
+    padding: 10px 0;
+  }
+  
+  .bottom-section a {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: #D1D5DB;
+    text-decoration: none; /* Remove underline from links */
+  }
+  
+  .bottom-section a:hover {
+    background-color: #374151;
+    color: #FFFFFF;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    left: 0;
+    top: 100%; /* Position the dropdown right below the settings icon */
+    min-width: 150px;
+    background-color: #1F2937;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    z-index: 1001;
+    margin-top: 5px; /* Add a little space between the icon and the dropdown */
+    padding: 5px 0; /* Add padding inside the dropdown for spacing */
+  }
+  
+  .dropdown-menu.active {
+    display: block; /* Show when active */
+  }
+  
+  .dropdown-item {
+    padding: 12px 20px;
+    color: #9CA3AF;
+    text-align: left;
+    display: block; /* Ensure dropdown items are block level for full width */
+    cursor: pointer; /* Change cursor to pointer to indicate clickable items */
+  }
+  
+  .dropdown-item svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #374151;
+    color: #FFFFFF;
+  }
+  
+  .notification-count {
+    padding: 5px;
+    border-radius: 50%;
+    background-color: #ddd; /* Default background */
+    color: black; /* Default text color */
+  }
+  
+  .notification-count.has-notifications {
+    background-color: red; /* Red background for notifications */
+    color: white; /* White text color for visibility */
+  }
+  
+  .notification-count.has-notifications:empty {
+    display: none; /* Hide the badge when there are no notifications */
+  }
+  
+  .notification-count.has-notifications:after {
+    content: attr(data-count); /* Display the count value */
+  }
+  
+  .username-notification-container {
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .notification-container {
+    padding-left: 20px;
+    margin-left: 10px;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .notification-count {
+    position: absolute;
+    top: 8px; /* Adjust this value to move the badge up */
+    right: 14px; /* Adjust this value to move the badge to the right */
+    width: 5px; /* Width of the badge */
+    height: 5px; /* Height of the badge */
+    border-radius: 100%; /* Makes it circular */
+    background-color: #FF4500; /* Red background color for notifications */
+    color: white; /* White text color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px; /* Adjust the font size if necessary */
+    font-weight: bold; /* Makes the number bold */
+    box-shadow: 0 0 2px rgba(0,0,0,0.5); /* Optional: adds a slight shadow for depth */
+    z-index: 1; /* Ensures it will be above other elements */
+  }
+  

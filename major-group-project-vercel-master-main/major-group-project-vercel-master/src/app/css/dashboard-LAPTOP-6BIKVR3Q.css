@@ -1,0 +1,242 @@
+body {
+    background: linear-gradient(to right, #8e9eab, #eef2f3);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font */
+  }
+  
+  
+  /* Common styles for glassmorphism effect */
+  .glass-container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #8e9eab, #eef2f3);
+    overflow: hidden; /* Remove overflow to hide the white frame */
+  }
+  
+  .dashboard-container {
+    display: flex;
+    width: 80%;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  
+  .main-content {
+    display: flex;
+    flex: 1;
+  }
+  
+  .side-bar {
+    flex: 1;
+    padding: 20px;
+    color: white;
+  }
+  
+  .left {
+    background: rgba(0, 123, 255, 0.5);
+    /* Add glassmorphism effect to sidebar */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .right {
+    background: rgba(40, 167, 69, 0.5);
+    /* Add glassmorphism effect to sidebar */
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .central-content,
+    .side-bar {
+  
+    flex: 2;
+    padding: 20px;
+    /* Add glassmorphism effect to central content */
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Style changes for glassmorphism effect */
+  .central-content,
+  .side-bar {
+    margin: 20px;
+    padding: 20px;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  
+  .side-bar h2,
+  .central-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    padding: 15px;
+  }
+  
+  /* Add styles for the buttons */
+  button {
+    background: #007bff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer;
+    font-weight: bold; /* Make text bold */
+    transition: all 0.2s ease-in-out; /* Smooth transition for hover effect */
+  }
+  
+  button:hover {
+    background: #0056b3; /* Darker shade on hover */
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2); /* Add shadow for depth */
+  }
+  
+  
+  /* Popup styles */
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Heavily blurred background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow: auto; /* Add overflow property to enable scrollbar */
+    backdrop-filter: blur(5px); /* Softer blur effect */
+  }
+  
+  
+  .popup-content {
+    background: #ffffff;
+    border-radius: 15px; /* Smoother border radius */
+    padding: 25px; /* More padding for better spacing */
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2); /* Soft shadow for depth */
+    color: #333; /* Darker text for better readability */
+    font-size: 16px; /* Larger font size */
+  }
+  .popup-content h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .popup-content form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .popup-content label {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .popup-content select {
+    background: #f8f9fa;
+    border: 2px solid #ced4da; /* Subtle border */
+    border-radius: 5px; /* Consistent border radius */
+    box-sizing: border-box; /* For accurate width measurement */
+    height: 40px; /* Increased height for better touch */
+    font-size: 16px; /* Larger font size for readability */
+  }
+  
+  .popup-content button {
+    background: rgba(0, 123, 255, 0.7); /* Change button background color */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    border: none;
+    width: 100%;
+    max-width: 200px; /* Adjust maximum width as needed */
+    margin: 0 auto;
+  }
+  
+  .popup-content center {
+    text-align: center;
+  }
+  
+  .popup-content button:hover {
+    background: rgba(0, 123, 255, 1); /* Darken button color on hover */
+  }
+  
+  .popup-content button + button {
+    margin-top: 10px; /* Add space between buttons */
+  }
+  /* Module list styles */
+  .module-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .module-box {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .module-box h3 {
+    font-size: 1.2rem;
+  }
+  
+  .module-box p {
+    margin-top: 5px;
+  }
+  
+  .module-box small {
+    display: block;
+    margin-top: 5px;
+  }
+  
+  /* Space between Submit and Cancel buttons */
+  .popup-content center button {
+    margin-right: 10px;
+  }
+  
+  /* Popup form styles */
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  label {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+  }

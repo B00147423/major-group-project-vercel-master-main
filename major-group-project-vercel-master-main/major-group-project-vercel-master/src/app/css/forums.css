@@ -1,0 +1,170 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  
+  body, html {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #DAE0E6;
+     
+  }
+  .forum-container {
+   
+    max-width: 940px; /* Increased width for a better layout */
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .forum-post {
+  
+    border: 1px solid #e1e4e8; /* Add border for definition */
+    margin-bottom: 16px;
+    border-radius: 4px;
+    padding: 16px;
+    background-color: #FFF;
+    transition: box-shadow 0.2s ease-in-out;
+  }
+  
+  .forum-post h3 {
+    margin-top: 0;
+    color: #1c1c1c; /* Slightly darker font color for better readability */
+  }
+  
+  .forum-post p {
+    color: #1c1c1c;
+    line-height: 1.6;
+  }
+  
+  
+  .forum-post:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Smooth hover effect */
+  }
+  
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .container {
+    
+    flex-grow: 1; /* Take up the remaining space */
+    margin-left: 240px; /* Adjust to the width of your sidebar */
+    padding: 20px; /* Add padding inside the container */
+    box-sizing: border-box; /* Include padding in the width calculation */
+    max-width: calc(100% - 240px); /* Adjust to the width of your sidebar */
+    margin: 0 auto; /* Center the container */
+  }
+  
+  .modal-content {
+    position: relative;
+    width: 80%; 
+    max-width: 600px;
+    height: auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); 
+  }
+  
+  .modal-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: none;
+    font-size: 1.5rem;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .modal-close-button:hover {
+    color: #ff0000;
+  }
+  
+  .comment-form {
+    margin-top: 20px;
+  }
+  
+  .comment-form textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+  }
+  
+  .comment-form button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .comment-form button:hover {
+    background-color: #0056b3;
+  }
+  
+  .comment-container {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+  }
+  
+  .comment {
+    margin-bottom: 20px;
+  }
+  
+  .comment p {
+    margin-bottom: 5px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  
+  /* Responsive design to adapt to different screen sizes */
+  @media (max-width: 768px) {
+    .forum-container {
+      width: 90%;
+      margin: 10px auto;
+    }
+  
+    .modal-content {
+      width: 90%;
+    }
+  }
+  
+  /* Add this to your CSS file */
+  .edit-comment-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .edit-comment-button:hover {
+    background-color: #0056b3;
+  }

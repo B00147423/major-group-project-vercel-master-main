@@ -1,0 +1,78 @@
+
+import Image from 'next/image'
+import styles from './page.module.css'
+
+const request = require('request');
+
+export default async function Home() {
+
+
+  
+   
+
+
+   var api_result = getRes();
+
+   const [api_final_result] = await Promise.all([api_result])
+
+
+ 
+  return (
+    
+   
+    <>
+    <h1>{JSON.stringify(api_final_result)}</h1>
+
+     </>
+   
+  )
+}
+
+
+
+
+
+
+
+
+
+
+
+async function getRes() {
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+    let ress = await fetch('https://api.api-ninjas.com/v1/cryptoprice?symbol=LTCBTC', {
+      headers: {
+        'X-Api-Key': 'kQHNjmdShYOe2BzKo3In9A==VsPRaHQv9fwAtagB'
+      }
+    })
+      .then(response => response.json())
+      .then(
+
+        return data
+
+      )
+
+   
+
+
+
+
+
+
+  }

@@ -1,0 +1,18 @@
+.main {
+    margin-left: 200px; /* Adjust this value to match the width of your sidebar */
+    min-height: calc(100vh - 120px); /* Adjust this value based on header and footer height */
+    padding: 20px; /* Add some padding for the content */
+  }
+    /* Ensure the footer is at the bottom of the page */
+  /* Ensure the footer is at the bottom of the page */
+  .footer {
+    padding: 20px;
+    background: #f8f9fa;
+  }
+    
+    /* Make sure the body has no margin to allow layout components to fill the screen */
+    .body {
+      margin: 0;
+      padding: 0;
+    }
+    
