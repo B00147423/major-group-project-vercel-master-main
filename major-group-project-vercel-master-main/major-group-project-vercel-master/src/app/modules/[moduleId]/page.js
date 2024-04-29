@@ -27,7 +27,8 @@ const ModulePage = () => {
       const { moduleId } = router.query;
       console.log('Module ID:', moduleId);
       setModuleId(moduleId); // Set the moduleId state variable
-      fetchPostsByModule(moduleId);
+      // Fetch module details based on moduleId
+      fetchModuleDetails(); // Call fetchModuleDetails here
     }
   }, [router.query]);
 
