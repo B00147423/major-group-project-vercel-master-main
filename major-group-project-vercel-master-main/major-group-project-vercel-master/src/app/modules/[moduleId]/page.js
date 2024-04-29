@@ -1,5 +1,4 @@
 "use client";
-"use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Box, TextField } from "@mui/material";
@@ -233,3 +232,4 @@ const ModulePage = () => {
 };
 
 export default ModulePage;
+
