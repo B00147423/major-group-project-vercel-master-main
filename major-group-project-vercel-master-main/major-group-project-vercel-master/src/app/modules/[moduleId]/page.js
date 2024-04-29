@@ -22,7 +22,7 @@ const ModulePage = () => {
   useEffect(() => {
     if (router.query && router.query.moduleId) {
       const { moduleId } = router.query;
-      moduleId(moduleId);
+      setModuleId(moduleId);
       fetchPostsByModule(moduleId);
     }
   }, [router.query]);
