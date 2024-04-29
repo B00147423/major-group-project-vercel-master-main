@@ -1,13 +1,10 @@
 // components/Header.js
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Use 'next/router' instead of 'next/navigation'
+import Link from 'next/link'; // Import Link from next/link
 import '../css/header.css';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import SearchIcon from '@mui/icons-material/Search';
-import HomeIcon from '@mui/icons-material/Home';
-import SettingsIcon from '@mui/icons-material/Settings';
+import SvgIcon from '@mui/material/SvgIcon';
 
 const Header = ({ setSearchResults }) => {
   const [username, setUsername] = useState('');
@@ -109,7 +106,7 @@ const Header = ({ setSearchResults }) => {
         <div className="username-notification-container">
           <div className="username-display">{username}</div>
           <div className="notification-container" ref={notificationRef}>
-            <SvgIcon component={NotificationsIcon} onClick={toggleNotificationsDropdown} />
+            <button onClick={toggleNotificationsDropdown}>🔔</button>
             <span
               className={`notification-count ${notificationCount > 0 ? 'has-notifications' : ''}`}
               onClick={toggleNotificationsDropdown}
@@ -138,15 +135,17 @@ const Header = ({ setSearchResults }) => {
             onBlur={() => !searchQuery && setIsSearchExpanded(false)}
             className="search-input"
           />
-          <SvgIcon component={SearchIcon} className="search-icon" onClick={handleSearch} />
+          <button className="search-icon" onClick={handleSearch}>🔎</button>
         </div>
         <Link href="/dashboard" className="menu-item">
-          <SvgIcon component={HomeIcon} />
-          Dashboard
+          
+          🏠 Dashboard
+          
         </Link>
         <div className="menu-item" onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}>
-          <SvgIcon component={SettingsIcon} />
-          Settings {showSettingsDropdown ? '▲' : '▼'}
+          
+          ⚙️ Settings {showSettingsDropdown ? '▲' : '▼'}
+          
         </div>
         {showSettingsDropdown && (
           <div className="profile-dropdown">
