@@ -65,7 +65,7 @@ const Header = ({ setSearchResults }) => {
     const fetchNotifications = async () => {
       const username = getUsernameFromCookies();
       try {
-        const response = await fetch('/api/notification');
+        const response = await fetch(`/api/notification?username=${username}`);
         if (!response.ok) {
           throw new Error('Failed to fetch notifications');
         }
