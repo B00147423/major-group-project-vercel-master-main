@@ -17,22 +17,23 @@ export async function GET(request) {
             const currentUsername = cookies.username;
             console.log('Current username from cookie:', currentUsername);
       
-            // Ensure that a username is available
-            if (!currentUsername) {
-                throw new Error('Username not found in cookies');
-            }
 
-            const notificationsCollection = db.collection('notifications');
-            // Find the document for the current user
-            const userDoc = await notificationsCollection.findOne({ username: currentUsername });
-
-            // If the userDoc exists, filter out the notifications created by the current user
-            // If not, return an empty array
-            const userNotifications = userDoc ? userDoc.notifications.filter(notification => notification.createdBy !== currentUsername) : [];
-
-            // Now you have the notifications specific to the current user
-            return NextResponse.json({ notifications: userNotifications }, { status: 200 });
+        // Ensure that a username is available
+        if (!currentUsername) {
+            throw new Error('Username not found in cookies');
         }
+
+        const notificationsCollection = db.collection('notifications');
+        // Find the document for the current user
+        const userDoc = await notificationsCollection.findOne({ username: currentUsername });
+
+        // If the userDoc exists, filter out the notifications created by the current user
+        // If not, return an empty array
+        const userNotifications = userDoc ? userDoc.notifications.filter(notification => notification.createdBy !== currentUsername) : [];
+
+        // Now you have the notifications specific to the current user
+        return NextResponse.json({ notifications: userNotifications }, { status: 200 });
+    }
     } catch (error) {
         console.error('Error fetching notifications:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
