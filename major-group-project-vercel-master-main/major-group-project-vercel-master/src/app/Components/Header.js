@@ -4,7 +4,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation'; // Use 'next/router' instead of 'next/navigation'
 import Link from 'next/link'; // Import Link from next/link
 import '../css/header.css';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import SvgIcon from '@mui/material/SvgIcon';
+import SearchIcon from '@mui/icons-material/Search';
+import HomeIcon from '@mui/icons-material/Home';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const Header = ({ setSearchResults }) => {
   const [username, setUsername] = useState('');
@@ -65,7 +69,7 @@ const Header = ({ setSearchResults }) => {
     const fetchNotifications = async () => {
       const username = getUsernameFromCookies();
       try {
-        const response = await fetch(`/api/notification?username=${encodeURIComponent(username)}`);
+        const response = await fetch('/api/notification');
         if (!response.ok) {
           throw new Error('Failed to fetch notifications');
         }
@@ -76,7 +80,7 @@ const Header = ({ setSearchResults }) => {
         console.error('Error fetching notifications:', error);
       }
     };
-  
+
     fetchNotifications();
   }, []);
 
@@ -106,7 +110,7 @@ const Header = ({ setSearchResults }) => {
         <div className="username-notification-container">
           <div className="username-display">{username}</div>
           <div className="notification-container" ref={notificationRef}>
-            <button onClick={toggleNotificationsDropdown}>🔔</button>
+            <SvgIcon component={NotificationsIcon} onClick={toggleNotificationsDropdown} />
             <span
               className={`notification-count ${notificationCount > 0 ? 'has-notifications' : ''}`}
               onClick={toggleNotificationsDropdown}
@@ -135,17 +139,15 @@ const Header = ({ setSearchResults }) => {
             onBlur={() => !searchQuery && setIsSearchExpanded(false)}
             className="search-input"
           />
-          <button className="search-icon" onClick={handleSearch}>🔎</button>
+          <SvgIcon component={SearchIcon} className="search-icon" onClick={handleSearch} />
         </div>
         <Link href="/dashboard" className="menu-item">
-          <button>
-          🏠 Dashboard
-          </button>
+          <SvgIcon component={HomeIcon} />
+          Dashboard
         </Link>
         <div className="menu-item" onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}>
-          <button>
-          ⚙️ Settings {showSettingsDropdown ? '▲' : '▼'}
-          </button>
+          <SvgIcon component={SettingsIcon} />
+          Settings {showSettingsDropdown ? '▲' : '▼'}
         </div>
         {showSettingsDropdown && (
           <div className="profile-dropdown">
