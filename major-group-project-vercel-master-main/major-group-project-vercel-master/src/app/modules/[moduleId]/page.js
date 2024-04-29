@@ -9,7 +9,7 @@ import Comment from '../../Components/Comments';
 
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
-  const [moduleId, setModuleId] = useState(null);
+  const [moduleId, setModuleId] = useState('');
   const [threads, setThreads] = useState([]);
   const [posts, setPosts] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
@@ -22,15 +22,19 @@ const ModulePage = () => {
 
 
 
+
   useEffect(() => {
     if (router.query && router.query.moduleId) {
       const { moduleId } = router.query;
       console.log('Module ID:', moduleId);
-      setModuleId(moduleId); // Set the moduleId state variable
+      setModuleId(moduleId || ''); // Set the moduleId state variable
       // Fetch module details based on moduleId
       fetchModuleDetails(); // Call fetchModuleDetails here
     }
   }, [router.query]);
+
+  // Other useEffect hooks...
+
 
   async function runDBCallAsync(url, formData){
     try {
