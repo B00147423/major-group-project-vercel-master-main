@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Box, TextField } from "@mui/material";
-import Link from 'next/link'; 
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
 import Comment from '../../Components/Comments';
@@ -148,13 +147,16 @@ const ModulePage = () => {
   };
 
   const handleCreatePost = () => {
+    if (typeof window !== 'undefined'){
       localStorage.setItem('currentModuleId', moduleId);
+    } 
     router.push('/createPost');
   };
 
   const handleCreateAnnouncement = () => {
+    if (typeof window !=='undefined'){
       localStorage.setItem('currentModuleId', moduleId);
-
+    }
     
     router.push('/createAnnouncement');
   };
@@ -184,6 +186,7 @@ const ModulePage = () => {
         event.target.content.value = ''; // Clear the comment input field
         // Fetch comments again to update immediately
         fetchComments(postId);
+        router.push(`/modules/${moduleId}`); 
       }
     } catch (error) {
       console.error('Error creating post:', error);

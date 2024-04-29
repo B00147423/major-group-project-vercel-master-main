@@ -13,9 +13,9 @@ export async function GET(request) {
 
         // Parse the request cookies
         
-            const cookies = cookie.parse(request.headers.get('cookie') || '');
-            const currentUsername = cookies.username;
-            console.log('Current username from cookie:', currentUsername);
+        const cookies = cookie.parse(request.headers.get('cookie') || '');
+        const currentUsername = cookies.username;
+        console.log('Current username from cookie:', currentUsername);
 
         // Ensure that a username is available
         if (!currentUsername) {
