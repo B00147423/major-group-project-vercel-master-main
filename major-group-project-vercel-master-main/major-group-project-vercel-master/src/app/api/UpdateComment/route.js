@@ -24,7 +24,7 @@ export async function PATCH(req, res) {
             { "_id": new ObjectId(commentId) }, // Filter to identify the document to update
             { $set: { "content": content, "editedAt": new Date() } } // Update content and editedAt
         );
-
+            console.log("GFDSKGNDFOIGN",updateResult);
 
         // Check if the document was successfully updated
         if (updateResult.matchedCount === 0) {
