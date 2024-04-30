@@ -186,13 +186,15 @@ const ModulePage = () => {
         event.target.content.value = ''; // Clear the comment input field
         // Fetch comments again to update immediately
         fetchComments(postId);
-        router.push(`/modules/${moduleId}`); 
+  
+        // Refresh the popup by closing and reopening it
+        closeModal();
+        handleViewPost(selectedPost);
       }
     } catch (error) {
       console.error('Error creating post:', error);
     }
   };
-
 
 
   const handleReplySubmit = async (parentCommentId, replyContent) => {
