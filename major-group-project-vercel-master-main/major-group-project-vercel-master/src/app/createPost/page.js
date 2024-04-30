@@ -113,6 +113,7 @@ const createPost = () => {
             label="content"
             type="text"
             id="content"
+   
           />
           <br></br>
 

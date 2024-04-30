@@ -19,7 +19,6 @@ export async function PATCH(req, res) {
         const db = client.db(dbName);
         const collection = db.collection('commentsandreply');
 
-      
         const updateResult = await collection.updateOne(
             { "_id": new ObjectId(commentId) }, // Filter to identify the document to update
             { $set: { "content": content, "editedAt": new Date() } } // Update content and editedAt
@@ -36,9 +35,5 @@ export async function PATCH(req, res) {
     } catch (error) {
         console.error('Error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
-    } finally {
-        if (client) {
-            await client.close();
-        }
-    }
+    } 
 }
