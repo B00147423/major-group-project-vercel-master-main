@@ -5,15 +5,20 @@ import styles from '../css/Comment.module.css';
 
 
 const Comment = ({ comment, onCommentUpdate, onDeleteComment, onReplySubmit, currentUser }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(comment.content);
-  const [replyContent, setReplyContent] = useState('');
-  const [isReplying, setIsReplying] = useState(false);
-
-  const lastReply = comment.replies?.slice(-1)[0] || {};
-  const userHasLastReply = lastReply.poster === currentUser;
-  const allowReply = !userHasLastReply || comment.replies?.length === 0;
-
+  
+    if (!comment) {
+        return null; // Or render a placeholder or loading state
+      }
+    
+      const [isEditing, setIsEditing] = useState(false);
+      const [editedContent, setEditedContent] = useState(comment.content);
+      const [replyContent, setReplyContent] = useState('');
+      const [isReplying, setIsReplying] = useState(false);
+    
+      const lastReply = comment.replies?.slice(-1)[0] || {};
+      const userHasLastReply = lastReply.poster === currentUser;
+      const allowReply = !userHasLastReply || comment.replies?.length === 0;
+    
   const handleEdit = () => {
     setIsEditing(true);
     setEditedContent(comment.content);
