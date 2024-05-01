@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import Layout from '../../Components/Layout';
+import Comment from '../../Components/Comment'; // Assuming Comment component is located here
 import '../../css/modulePage.css';
 import styles from '../../css/Comment.module.css';
 
@@ -25,6 +26,7 @@ const CommentPage = () => {
     getUsernameFromCookies();
     fetchUserInfo();
   }, []);
+
   async function runDBCallAsync(url, formData){
     try {
       const res = await fetch(url, {
@@ -48,6 +50,7 @@ const CommentPage = () => {
       throw error; // Re-throw the error to be handled by the caller
     }
   }
+
   const fetchComments = async () => {
     try {
       // Make a GET request to your API endpoint
@@ -297,49 +300,12 @@ const CommentPage = () => {
                   )}
                 </div>
                 <div className={styles['comment-content']}>
-                  {isEditing ? (
-                    <TextField
-                      multiline
-                      fullWidth
-                      variant="outlined"
-                      value={editedContent}
-                      onChange={(e) => setEditedContent(e.target.value)}
-                    />
-                  ) : (
-                    <Typography variant="body1">{comment.content}</Typography>
-                  )}
+                  <Typography variant="body1">{comment.content}</Typography>
                 </div>
-                {username === comment.poster && !isEditing && (
+                {username === comment.poster && (
                   <div className={styles['comment-actions']}>
                     <Button onClick={handleEdit} className={styles['action-btn']}>Edit</Button>
                     <Button onClick={handleDelete} className={styles['action-btn']}>Delete</Button>
-                  </div>
-                )}
-                {!isEditing && !isReplying && (
-                  <div className={styles['comment-actions']}>
-                    <Button onClick={() => setIsReplying(true)} className={styles['action-btn']}>Reply</Button>
-                  </div>
-                )}
-                {isEditing && (
-                  <div className={styles['comment-actions']}>
-                    <Button onClick={handleSaveEdit} className={styles['save-btn']}>Save</Button>
-                    <Button onClick={handleCancelEdit} className={styles['cancel-btn']}>Cancel</Button>
-                  </div>
-                )}
-                {isReplying && (
-                  <div className={styles['reply-section']}>
-                    <TextField
-                      multiline
-                      fullWidth
-                      variant="outlined"
-                      value={replyContent}
-                      onChange={handleReplyChange}
-                      placeholder="Write a reply..."
-                    />
-                    <div className={styles['reply-actions']}>
-                      <Button onClick={handleSubmitReply} className={styles['action-btn']}>Submit Reply</Button>
-                      <Button onClick={handleCancelReply} className={styles['action-btn']}>Cancel</Button>
-                    </div>
                   </div>
                 )}
                 {comment.replies && comment.replies.map((reply, index) => (
