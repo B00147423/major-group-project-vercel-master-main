@@ -1,139 +1,120 @@
 "use client";
+"use client";
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
+import styles from '../../css/Comment.module.css';
+import Comment from '../../Components/Comment'; // Import the Comment component
 
 const CommentPage = () => {
+  const [threads, setThreads] = useState([]);
   const [username, setUsername] = useState('');
-  const [moduleId, setModuleId] = useState('');
-  const [moduleInfo, setModuleInfo] = useState({});
-  const [posts, setPosts] = useState([]);
-  const [announcements, setAnnouncements] = useState([]);
+  const router = useRouter();
+  const postId = localStorage.getItem('currentPostId');
   const [comments, setComments] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [email, setEmail] = useState('');
-  const [newCommentContent, setNewCommentContent] = useState('');
+  const [replyContent, setReplyContent] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState('');
+  const [isReplying, setIsReplying] = useState(false);
 
   useEffect(() => {
-    // Fetch module details and related data when component mounts
-    fetchModuleDetails();
+    // Fetch comments when component mounts
+    fetchComments();
     getUsernameFromCookies();
     fetchUserInfo();
   }, []);
 
-  useEffect(() => {
-    // Fetch posts for the module when moduleId changes
-    if (moduleId) {
-      fetchPostsForModule();
-    }
-  }, [moduleId]);
-
-  useEffect(() => {
-    // Fetch announcements for the module when moduleId changes
-    if (moduleId) {
-      fetchAnnouncementsForModule();
-    }
-  }, [moduleId]);
-
-  const fetchModuleDetails = async () => {
-    // Fetch module details using the moduleId
+  const fetchComments = async () => {
     try {
-      // Your API call to fetch module details
-      const moduleData = await fetch(`/api/moduleDetails?moduleId=${moduleId}`);
-      const moduleInfo = await moduleData.json();
-      setModuleInfo(moduleInfo);
+      // Make a GET request to your API endpoint
+      const response = await fetch(`/api/getCommentsById?postId=${postId}`); // Update the URL with your actual API endpoint
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments');
+      }
+      const data = await response.json();
+      console.log('Comments:', data); // Log the data to the console
+      setComments(data); // Update state with the fetched comments
     } catch (error) {
-      console.error('Error fetching module details:', error);
+      console.error('Error fetching comments:', error);
     }
   };
 
   const getUsernameFromCookies = () => {
-    // Function to get username from cookies
     const allCookies = document.cookie.split('; ');
     const usernameCookie = allCookies.find(cookie => cookie.startsWith('username='));
     const usernameFromCookies = usernameCookie ? decodeURIComponent(usernameCookie.split('=')[1]) : '';
+    console.log('Username from cookies:', usernameFromCookies);
     setUsername(usernameFromCookies);
   };
 
   const fetchUserInfo = async () => {
-    // Fetch user information using cookies
-    // Implement your logic here
-  };
+    const userId = getUserIdFromCookies();
+    if (!userId) {
+      console.log("User ID not found.");
+      return;
+    }
 
-  const fetchPostsForModule = async () => {
-    // Fetch posts for the module
     try {
-      // Your API call to fetch posts for the module
-      const postsData = await fetch(`/api/postsByModule?moduleId=${moduleId}`);
-      const posts = await postsData.json();
-      setPosts(posts);
+      const res = await fetch(`/api/getUserInfo?userId=${userId}`);
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch user information");
+      }
+
+      const { user } = await res.json();
+      if (user && user.length > 0) {
+        const userInfo = user[0]; // Assuming the result is an array with a single user object
+
+        setEmail(userInfo.email);
+      }
     } catch (error) {
-      console.error('Error fetching posts for module:', error);
+      console.error("Error fetching user information:", error);
     }
   };
 
-  const fetchAnnouncementsForModule = async () => {
-    // Fetch announcements for the module
-    try {
-      // Your API call to fetch announcements for the module
-      const announcementsData = await fetch(`/api/announcementsByModule?moduleId=${moduleId}`);
-      const announcements = await announcementsData.json();
-      setAnnouncements(announcements);
-    } catch (error) {
-      console.error('Error fetching announcements for module:', error);
-    }
+  const getUserIdFromCookies = () => {
+    const allCookies = document.cookie.split('; ');
+    const userIdCookie = allCookies.find(cookie => cookie.startsWith('userId='));
+    return userIdCookie ? decodeURIComponent(userIdCookie.split('=')[1]) : null;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent the default form submission behavior
-    const content = newCommentContent.trim();
-    
-    if (!content || !username || !selectedPost) return; // Basic validation
+
+    const content = event.target.content.value.trim();
+    if (!content) return; // Basic validation to prevent empty comments
+
+    // Check if username is available
+    if (!username) {
+      console.error('Username is not available.');
+      return;
+    }
 
     const timestamp = new Date();
-    const poster = username;
-    const postId = selectedPost._id;
+    const poster = username; // Assign the username to poster
 
     try {
-      const response = await fetch(`/api/createComment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ poster, content, timestamp, postId }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create comment');
+      const response = await runDBCallAsync(`/api/createComment?poster=${poster}&content=${content}&timestamp=${timestamp}&postId=${postId}`, {});
+      if (response && response.data === "true") {
+        const newComment = { poster, content, timestamp, postId };
+        // Update comments state to include the new comment
+        setComments(prevComments => [...prevComments, newComment]);
+        event.target.content.value = ''; // Clear the comment input field
+        // Fetch comments again to update immediately
+        fetchComments(postId);
       }
-
-      const newComment = { poster, content, timestamp, postId };
-      setComments(prevComments => [...prevComments, newComment]);
-      setNewCommentContent(''); // Clear comment content
     } catch (error) {
-      console.error('Error creating comment:', error);
+      console.error('Error creating post:', error);
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
+  const onCommentUpdate = async (commentId, newContent) => {
     try {
-      const response = await fetch(`/api/deleteComment?commentId=${commentId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setComments(prevComments => prevComments.filter(comment => comment._id !== commentId));
-      } else {
-        console.error('Failed to delete comment');
-      }
-    } catch (error) {
-      console.error('Error deleting comment:', error);
-    }
-  };
-
-  const handleUpdateComment = async (commentId, newContent) => {
-    try {
+      // Call the API to update the comment
       const response = await fetch(`/api/updateComment`, {
         method: 'PATCH',
         headers: {
@@ -143,55 +124,239 @@ const CommentPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update comment');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update comment');
       }
 
+      // Update the comment in the local state to reflect the changes immediately
       setComments(prevComments =>
         prevComments.map(comment =>
-          comment._id === commentId ? { ...comment, content: newContent } : comment
+          comment._id === commentId ? { ...comment, content: newContent, editedAt: new Date().toISOString() } : comment
         )
       );
     } catch (error) {
-      console.error('Error updating comment:', error);
+      console.error('Error updating comment:', error.message);
     }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      // Make an API request to delete the comment with the given ID
+      const response = await fetch(`/api/deleteComments?commentId=${commentId}`, {
+        method: 'DELETE',
+        // Add any necessary headers or authentication tokens
+      });
+
+      if (response.ok) {
+        // If the deletion was successful, update the state or perform any other necessary actions
+        console.log('Comment deleted successfully');
+        // Remove the deleted comment from the comments state
+        setComments(prevComments => prevComments.filter(comment => comment._id !== commentId));
+      } else {
+        // If there was an error deleting the comment, handle it accordingly
+        console.error('Failed to delete comment');
+      }
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
+  const handleReplySubmit = async (parentCommentId, replyContent) => {
+    const url = `/api/postReply?parentCommentId=${parentCommentId}&poster=${username}&content=${replyContent}&timestamp=${new Date().toISOString()}`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to submit reply');
+      }
+
+      const newReply = { poster: username, content: replyContent, timestamp: new Date().toISOString() };
+      // Update comments state to include new reply
+      setComments(currentComments => currentComments.map(comment => {
+        if (comment._id === parentCommentId) {
+          return {...comment, replies: [...(comment.replies || []), newReply]};
+        }
+        return comment;
+      }));
+
+      return true;
+    } catch (error) {
+      console.error('Error submitting reply:', error);
+      alert('Failed to submit reply: ' + error.message);
+      return false;
+    }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditedContent(comments.content);
+  };
+
+  const handleReplyChange = (event) => {
+    setReplyContent(event.target.value);
+  };
+
+  const handleEditChange = (event) => {
+    setEditedContent(event.target.value);
+  };
+
+  const handleEditSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await onCommentUpdate(selectedPost._id, editedContent);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error editing comment:', error);
+    }
+  };
+
+  const handleReply = (comment) => {
+    setIsReplying(true);
+    setSelectedPost(comment);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditedContent('');
+  };
+
+  const handleCancelReply = () => {
+    setIsReplying(false);
+    setSelectedPost(null);
+    setReplyContent('');
   };
 
   return (
     <Layout>
-      <div className='container'>
-        {/* Render comments */}
-        {selectedPost && (
-          <div className="comment-section">
-            <h2>Comments for Post: {selectedPost.title}</h2>
-            <div className="comment-list">
+      <div className={styles.commentWrapper}>
+        <div>
+          <h2>Comments</h2>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              id="content"
+              label="Comment"
+              name="content"
+              multiline
+              rows={4}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Post Comment
+            </Button>
+          </form>
+          {comments.map(comment => (
+            <div key={comment._id}>
+              <Typography variant="subtitle1" component="h3" gutterBottom>
+                {comment.poster}
+              </Typography>
+              <Typography variant="body1" component="p" gutterBottom>
+                {comment.content}
+              </Typography>
+              <Typography variant="caption" gutterBottom>
+                {comment.timestamp}
+              </Typography>
+              {comment.replies && comment.replies.length > 0 && (
+                <div className={styles.repliesWrapper}>
+                  <Typography variant="subtitle2" component="h4">
+                    Replies:
+                  </Typography>
+                  {comment.replies.map(reply => (
+                    <div key={reply._id}>
+                      <Typography variant="body2" component="p">
+                        {reply.poster}: {reply.content}
+                      </Typography>
+                      <Typography variant="caption">
+                        {reply.timestamp}
+                      </Typography>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {!isEditing && (
+                <div>
+                  <Button onClick={() => handleEdit(comment)} color="primary">
+                    Edit
+                  </Button>
+                  <Button onClick={() => handleReply(comment)} color="primary">
+                    Reply
+                  </Button>
+                  <Button onClick={() => handleDeleteComment(comment._id)} color="secondary">
+                    Delete
+                  </Button>
+                </div>
+              )}
+              {isEditing && selectedPost._id === comment._id && (
+                <form onSubmit={handleEditSubmit}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="editedContent"
+                    label="Edited Content"
+                    name="editedContent"
+                    multiline
+                    rows={4}
+                    value={editedContent}
+                    onChange={handleEditChange}
+                  />
+                  <Button type="submit" variant="contained" color="primary">
+                    Save
+                  </Button>
+                  <Button onClick={handleCancelEdit} color="secondary">
+                    Cancel
+                  </Button>
+                </form>
+              )}
+              {isReplying && selectedPost._id === comment._id && (
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  handleReplySubmit(comment._id, replyContent);
+                }}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="replyContent"
+                    label="Reply Content"
+                    name="replyContent"
+                    multiline
+                    rows={4}
+                    value={replyContent}
+                    onChange={handleReplyChange}
+                  />
+                  <Button type="submit" variant="contained" color="primary">
+                    Reply
+                  </Button>
+                  <Button onClick={handleCancelReply} color="secondary">
+                    Cancel
+                  </Button>
+                </form>
+              )}
               {comments
                 .filter((comment) => comment.postId === selectedPost._id)
                 .map((comment, index) => (
-                  <div key={comment._id || index} className="comment" id={`comment-${comment._id || index}`}>
-                    <p>{comment.content}</p>
-                    {username === comment.poster && (
-                      <>
-                        <Button onClick={() => handleDeleteComment(comment._id)}>Delete</Button>
-                        <Button onClick={() => handleUpdateComment(comment._id, 'Updated content')}>Update</Button>
-                      </>
-                    )}
-                  </div>
+                  <Comment
+                    key={comment._id || index}
+                    comment={comment}
+                    onCommentUpdate={onCommentUpdate}
+                    onReplySubmit={handleReplySubmit}
+                    onDeleteComment={handleDeleteComment} // Pass the onDeleteComment function
+                    currentUser={username}
+                    id={`comment-${comment._id || index}`}
+                  />
                 ))}
             </div>
-            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                name="content"
-                label="Content"
-                type="text"
-                id="content"
-                value={newCommentContent}
-                onChange={(e) => setNewCommentContent(e.target.value)}
-              />
-              <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>Submit</Button>
-            </Box>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
     </Layout>
   );
