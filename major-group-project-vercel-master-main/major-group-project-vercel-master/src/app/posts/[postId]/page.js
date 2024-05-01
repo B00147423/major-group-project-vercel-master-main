@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/Comment.module.css';
