@@ -11,7 +11,7 @@ const CommentPage = () => {
   const [username, setUsername] = useState('');
   const router = useRouter();
   const postId = localStorage.getItem('currentPostId');
-  const [comment, setComments] = useState([]);
+  const [comments, setComments] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [email, setEmail] = useState('');
   const [replyContent, setReplyContent] = useState('');
@@ -194,7 +194,7 @@ const CommentPage = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditedContent(comment.content);
+    setEditedContent(comments.content);
   };
 
   const handleReplyChange = (event) => {
@@ -203,11 +203,11 @@ const CommentPage = () => {
 
   const handleCancelEdit = () => {
     setIsEditing(false);
-    setEditedContent(comment.content);
+    setEditedContent(comments.content);
   };
 
   const handleSubmitReply = async () => {
-    const success = await handleReplySubmit(comment._id, replyContent);
+    const success = await handleReplySubmit(comments._id, replyContent);
 
     if (success) {
       setReplyContent('');
@@ -222,15 +222,6 @@ const CommentPage = () => {
     setIsReplying(false);
   };
 
-  const submitReply = () => {
-    if (replyContent.trim() === '') {
-      // Don't submit empty replies
-      return;
-    }
-    onReplySubmit(comment._id, replyContent);
-    setReplyContent(''); // Clear the input field
-    setIsReplying(false); // Hide the reply input field
-  };
 
   const handleSaveEdit = async () => {
     if (editedContent.trim() === '') {
@@ -240,12 +231,12 @@ const CommentPage = () => {
 
     setIsEditing(false);
     // Call the onCommentUpdate function with the updated content
-    await onCommentUpdate(comment._id, editedContent);
+    await onCommentUpdate(comments._id, editedContent);
   };
 
   const handleDelete = () => {
     // Call the onDeleteComment function with the comment ID
-    onDeleteComment(comment._id);
+    handleDeleteComment(comments._id);
   };
 
   return (
