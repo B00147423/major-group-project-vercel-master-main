@@ -6,7 +6,7 @@ import { Button, Box, TextField, Typography } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
 import styles from '../../css/Comment.module.css';
-import Comment from '../../Components/Comment'; // Import the Comment component
+
 
 const CommentPage = () => {
   const [threads, setThreads] = useState([]);
