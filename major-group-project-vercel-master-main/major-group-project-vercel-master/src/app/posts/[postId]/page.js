@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
@@ -193,7 +194,7 @@ const CommentPage = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditedContent(comment.content);
+    setEditedContent(comments.content);
   };
 
   const handleReplyChange = (event) => {
@@ -202,39 +203,24 @@ const CommentPage = () => {
 
   const handleCancelEdit = () => {
     setIsEditing(false);
-    setEditedContent(comment.content);
+    setEditedContent(comments.content);
   };
 
   const handleSubmitReply = async () => {
-    try {
-      const success = await handleReplySubmit(comment._id, replyContent);
-      if (success) {
-        setReplyContent('');
-        setIsReplying(false);
-      } else {
-        alert('Failed to submit reply.');
-      }
-    } catch (error) {
-      console.error('Error handling reply submission:', error);
+    const success = await handleReplySubmit(comments._id, replyContent);
+    if (success) {
+      setReplyContent('');
+      setIsReplying(false);
+    } else {
       alert('Failed to submit reply.');
     }
   };
 
-  
   const handleCancelReply = () => {
     setReplyContent('');
     setIsReplying(false);
   };
 
-  const submitReply = () => {
-    if (replyContent.trim() === '') {
-      // Don't submit empty replies
-      return;
-    }
-    onReplySubmit(comment._id, replyContent);
-    setReplyContent(''); // Clear the input field
-    setIsReplying(false); // Hide the reply input field
-  };
 
   const handleSaveEdit = async () => {
     if (editedContent.trim() === '') {
@@ -244,17 +230,12 @@ const CommentPage = () => {
 
     setIsEditing(false);
     // Call the onCommentUpdate function with the updated content
-    await onCommentUpdate(comment._id, editedContent);
+    await onCommentUpdate(comments._id, editedContent);
   };
 
-  const handleDelete = async () => {
-    try {
-      // Call the onDeleteComment function with the comment ID
-      await handleDeleteComment(comment._id);
-    } catch (error) {
-      console.error('Error handling comment deletion:', error);
-      alert('Failed to delete comment.');
-    }
+  const handleDelete = () => {
+    // Call the onDeleteComment function with the comment ID
+    handleDeleteComment(comments._id);
   };
 
   return (
@@ -355,3 +336,4 @@ const CommentPage = () => {
 };
 
 export default CommentPage;
+
