@@ -4,258 +4,212 @@ import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material"; // Import Typography from Material-UI
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
-
+import styles from '../../css/Comment.module.css';
 
 
 const CommentPage = () => {
-  const [threads, setThreads] = useState([]);
-  const [username, setUsername] = useState('');
-  const router = useRouter();
-  const postId = localStorage.getItem('currentPostId');
-  const [comments, setComments] = useState([]);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [replyContent, setReplyContent] = useState('');
+    const router = useRouter();
+    const postId = localStorage.getItem('currentPostId');
+    const [comments, setComments] = useState([]);
   
-  useEffect(() => {
-    if (router.query && router.query.moduleId) {
-      const { moduleId } = router.query;
-      setModuleId(moduleId);
-      fetchPostsByModule(moduleId);
-    }
-  }, [router.query]);
+    useEffect(() => {
+      const getUsernameFromCookies = () => {
+        const allCookies = document.cookie.split('; ');
+        const usernameCookie = allCookies.find(cookie => cookie.startsWith('username='));
+        return usernameCookie ? decodeURIComponent(usernameCookie.split('=')[1]) : '';
+      };
+      const usernameFromCookies = getUsernameFromCookies();
+      console.log('Username from cookies:', usernameFromCookies);
+      setUsername(usernameFromCookies);
+    }, []);
   
-
-  async function runDBCallAsync(url, formData){
-    try {
-      const res = await fetch(url, {
-        method: 'POST', // Use POST method
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      // Check if the HTTP status code is OK (200-299)
-      if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
+    useEffect(() => {
+      if (router.query && router.query.moduleId) {
+        const { moduleId } = router.query;
+        // Assuming setModuleId is defined or imported properly
+        setModuleId(moduleId); // Assuming setModuleId is defined or imported properly
+        fetchPostsByModule(moduleId); // Assuming fetchPostsByModule is defined or imported properly
       }
+    }, [router.query]);
   
-      const data = await res.json(); // Parse the JSON in the response
-  
-      return data; // Return the parsed JSON data
-    } catch (error) {
-      // If an error occurs, log it to the console
-      console.error("Error during fetch: ", error);
-      throw error; // Re-throw the error to be handled by the caller
-    }
-  }
-
-  useEffect(() => {
-    const getUsernameFromCookies = () => {
-      const allCookies = document.cookie.split('; ');
-      const usernameCookie = allCookies.find(cookie => cookie.startsWith('username='));
-      return usernameCookie ? decodeURIComponent(usernameCookie.split('=')[1]) : '';
-    };
-    const usernameFromCookies = getUsernameFromCookies();
-    console.log('Username from cookies:', usernameFromCookies);
-    setUsername(usernameFromCookies);
-  }, []);
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const userId = getUserIdFromCookies();
-      if (!userId) {
-        console.log("User ID not found.");
-        return;
+    useEffect(() => {
+      if (router.isReady) {
+        const postId = router.query.postId; // Get the postId from the URL
+        fetchComments(postId);
       }
+    }, [router.isReady, router.query.postId]);
   
+    const fetchComments = async (postId) => {
       try {
-        const res = await fetch(`/api/getUserInfo?userId=${userId}`);
+        const response = await fetch(`/api/getCommentsById?postId=${postId}`);
+        if (!response.ok) throw new Error('Failed to fetch comments');
+        const data = await response.json();
+        setComments(data); // Set the fetched comments to state
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    };
   
-        if (!res.ok) {
-          throw new Error("Failed to fetch user information");
+    const handleCreateComment = () => {
+      if (typeof window !== 'undefined'){
+        localStorage.setItem('currentPostId', postId);
+      } 
+      router.push('/createComment');
+    };
+  
+    const handleCreateReply = async (commentId, replyContent) => {
+      const url = `/api/postReply?parentCommentId=${commentId}&poster=${username}&content=${replyContent}&timestamp=${new Date().toISOString()}`;
+      
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to submit reply');
         }
   
-        const { user } = await res.json();
-        if (user && user.length > 0) {
-          const userInfo = user[0]; // Assuming the result is an array with a single user object
+        const newReply = { poster: username, content: replyContent, timestamp: new Date().toISOString() };
+        // Update comments state to include new reply
+        setComments(currentComments => currentComments.map(comment => {
+          if (comment._id === commentId) {
+            return {...comment, replies: [...(comment.replies || []), newReply]};
+          }
+          return comment;
+        }));
   
-          setEmail(userInfo.email);
+        return true;
+      } catch (error) {
+        console.error('Error submitting reply:', error);
+        alert('Failed to submit reply: ' + error.message);
+        return false;
+      }
+    };
+  
+    const handleDeleteComment = async (commentId) => {
+      try {
+        const response = await fetch(`/api/deleteComments?commentId=${commentId}`, {
+          method: 'DELETE',
+          // Add any necessary headers or authentication tokens
+        });
+  
+        if (response.ok) {
+          console.log('Comment deleted successfully');
+          setComments(prevComments => prevComments.filter(comment => comment._id !== commentId));
+        } else {
+          console.error('Failed to delete comment');
         }
       } catch (error) {
-        console.error("Error fetching user information:", error);
+        console.error('Error deleting comment:', error);
       }
     };
   
-    fetchUserInfo();
-  }, []);
-
-  const getUserIdFromCookies = () => {
-    const allCookies = document.cookie.split('; ');
-    const userIdCookie = allCookies.find(cookie => cookie.startsWith('userId='));
-    return userIdCookie ? decodeURIComponent(userIdCookie.split('=')[1]) : null;
-  };
-
-  const handleCreateComment = () => {
-    if (typeof window !== 'undefined'){
-      localStorage.setItem('currentPostId', postId);
-    } 
-    router.push('/createComment');
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent the default form submission behavior
-    
-    const content = event.target.content.value.trim();
-    if (!content) return; // Basic validation to prevent empty comments
+    const handleDeleteReply = async (commentId, replyId) => {
+      try {
+        const response = await fetch(`/api/deleteReply?commentId=${commentId}&replyId=${replyId}`, {
+          method: 'DELETE',
+          // Add any necessary headers or authentication tokens
+        });
   
-    // Check if username is available
-    if (!username) {
-      console.error('Username is not available.');
-      return;
-    }
-  
-    const timestamp = new Date();
-    const poster = username; // Assign the username to poster
-    const postId = selectedPost._id;
-  
-    try {
-      const response = await runDBCallAsync(`/api/createComment?poster=${poster}&content=${content}&timestamp=${timestamp}&postId=${postId}`, {});
-      if (response && response.data === "true") {
-        const newComment = { poster, content, timestamp, postId };
-        // Update comments state to include the new comment
-        setComments(prevComments => [...prevComments, newComment]);
-        event.target.content.value = ''; // Clear the comment input field
-        // Fetch comments again to update immediately
-        fetchComments(postId);
-  
-        // Refresh the popup by closing and reopening it
-        closeModal();
-        handleViewPost(selectedPost);
-      }
-    } catch (error) {
-      console.error('Error creating post:', error);
-    }
-  };
-
-
-  const handleReplySubmit = async (parentCommentId, replyContent) => {
-    const url = `/api/postReply?parentCommentId=${parentCommentId}&poster=${username}&content=${replyContent}&timestamp=${new Date().toISOString()}`;
-  
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+        if (response.ok) {
+          console.log('Reply deleted successfully');
+          setComments(prevComments =>
+            prevComments.map(comment => {
+              if (comment._id === commentId) {
+                const updatedReplies = comment.replies.filter(reply => reply._id !== replyId);
+                return { ...comment, replies: updatedReplies };
+              }
+              return comment;
+            })
+          );
+        } else {
+          console.error('Failed to delete reply');
         }
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit reply');
+      } catch (error) {
+        console.error('Error deleting reply:', error);
       }
+    };
   
-      const newReply = { poster: username, content: replyContent, timestamp: new Date().toISOString() };
-      // Update comments state to include new reply
-      setComments(currentComments => currentComments.map(comment => {
-        if (comment._id === parentCommentId) {
-          return {...comment, replies: [...(comment.replies || []), newReply]};
+    const handleReplySubmit = async (commentId, replyContent) => {
+      if (!replyContent) return; // Basic validation for empty input
+  
+      try {
+        const success = await handleCreateReply(commentId, replyContent);
+        if (success) {
+          // Clear input field or update UI as needed
+          setReplyContent('');
+        } else {
+          // Handle failure or display error message
         }
-        return comment;
-      }));
+      } catch (error) {
+        // Handle error
+        console.error('Error creating reply:', error);
+      }
+    };
   
-      return true;
-    } catch (error) {
-      console.error('Error submitting reply:', error);
-      alert('Failed to submit reply: ' + error.message);
-      return false;
-    }
-  };
-
-const onCommentUpdate = async (commentId, newContent) => {
-  try {
-    // Call the API to update the comment
-    const response = await fetch(`/api/updateComment`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ commentId, content: newContent }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to update comment');
-    }
-
-    // Update the comment in the local state to reflect the changes immediately
-    setComments(prevComments =>
-      prevComments.map(comment =>
-        comment._id === commentId ? { ...comment, content: newContent, editedAt: new Date().toISOString() } : comment
-      )
-    );
-
-
-  } catch (error) {
-    console.error('Error updating comment:', error.message);
-  }
-};
-
-
-const handleDeleteComment = async (commentId) => {
-  try {
-    // Make an API request to delete the comment with the given ID
-    const response = await fetch(`/api/deleteComments?commentId=${commentId}`, {
-      method: 'DELETE',
-      // Add any necessary headers or authentication tokens
-    });
-
-    if (response.ok) {
-      // If the deletion was successful, update the state or perform any other necessary actions
-      console.log('Comment deleted successfully');
-      // Remove the deleted comment from the comments state
-      setComments(prevComments => prevComments.filter(comment => comment._id !== commentId));
-    } else {
-      // If there was an error deleting the comment, handle it accordingly
-      console.error('Failed to delete comment');
-    }
-  } catch (error) {
-    console.error('Error deleting comment:', error);
-  }
-};
-
-return (
-  <Layout>
-      <div className='container'>
-        {/* Text area and submit button for adding new comments */}
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
-          <p>{username}</p> {/* Display username here */}
+    return (
+      <Layout>
+        <div className='container'>
+          <Typography variant="h4" style={{ marginTop: '20px' }}>Comments Section</Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
             <TextField
+              fullWidth
               margin="normal"
               name="content"
-              label="Content"
+              label="Write a comment..."
               type="text"
               id="content"
             />
-            <Button type="submit" variant="contained" sx={{mt: 3, mb: 2}}>
-              Submit
+            <Button type="submit" variant="contained" color="primary" sx={{ mt: 2, mb: 2 }}>
+              Submit Comment
             </Button>
           </Box>
-
-        {/* Header for comments */}
-        <h2>Comments</h2>
-
-        {/* Display all comments */}
-        <div className="comment-list">
-          {comments.map((comment) => (
-            <div key={comment._id} className="comment">
-              <h4>{comment.poster}</h4>
-              <p>{comment.content}</p>
-            </div>
-          ))}
+  
+          <div className="comment-list">
+            {comments.length > 0 ? (
+              comments.map((comment, index) => (
+                <div key={index} style={{ marginTop: '10px' }}>
+                  <Typography variant="subtitle1">{comment.username}</Typography>
+                  <Typography variant="body1">{comment.content}</Typography>
+                  <Button onClick={() => handleDeleteComment(comment._id)}>Delete Comment</Button>
+                  {comment.replies.map((reply, index) => (
+                    <div key={index}>
+                      <Typography variant="subtitle2">{reply.poster}</Typography>
+                      <Typography variant="body2">{reply.content}</Typography>
+                      <Button onClick={() => handleDeleteReply(comment._id, reply._id)}>Delete Reply</Button>
+                    </div>
+                  ))}
+                  <Box component="form" onSubmit={(e) => { e.preventDefault(); handleReplySubmit(comment._id, replyContent); }} noValidate sx={{ mt: 3 }}>
+                    <TextField
+                      fullWidth
+                      margin="normal"
+                      name="replyContent"
+                      label="Write a reply..."
+                      type="text"
+                      id="replyContent"
+                      value={replyContent}
+                      onChange={(e) => setReplyContent(e.target.value)}
+                    />
+                    <Button type="submit" variant="contained" color="primary" sx={{ mt: 2, mb: 2 }}>
+                      Submit Reply
+                    </Button>
+                  </Box>
+                </div>
+              ))
+            ) : (
+              <Typography variant="body2">No comments yet. Be the first to comment!</Typography>
+            )}
+          </div>
         </div>
-      </div>
-    </Layout>
-);
-};
-
-export default CommentPage;
+      </Layout>
+    );
+  };
+  
+  export default CommentPage;
+  
