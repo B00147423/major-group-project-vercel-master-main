@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Box, TextField } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
-import Comment from '../../Components/Comments';
+
 
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
@@ -13,33 +13,11 @@ const ModulePage = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [username, setUsername] = useState('');
   const router = useRouter();
-  const postId = localStorage.getItem('currentPostId');
+  const moduleId = localStorage.getItem('currentModuleId');
   const [comments, setComments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [email, setEmail] = useState('');
-
-  useEffect(() => {
-    // Fetch comments when postId changes
-    if (postId) {
-      fetchComments(postId);
-    }
-  }, [postId]);
-
-  const fetchComments = async (postId) => {
-    try {
-      // Fetch comments for the post
-      const response = await fetch(`/api/getCommentsById?postId=${postId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch comments');
-      }
-      const commentsData = await response.json();
-      setComments(commentsData);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  };
-
   useEffect(() => {
     if (router.query && router.query.moduleId) {
       const { moduleId } = router.query;
@@ -282,9 +260,6 @@ const onCommentUpdate = async (commentId, newContent) => {
 };
 
 const handleViewPost = (postId) => {
-  if (typeof window !=='undefined'){
-    postId = localStorage.setItem('currentPostId', postId);
-  }
   router.push(`/posts/${postId}`);
 };
 
