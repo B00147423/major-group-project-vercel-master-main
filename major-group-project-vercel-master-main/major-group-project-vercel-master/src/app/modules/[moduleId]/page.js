@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Box, TextField } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
+import Comment from '../../Components/Comments';
 
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
@@ -12,11 +13,33 @@ const ModulePage = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [username, setUsername] = useState('');
   const router = useRouter();
-  const moduleId = localStorage.getItem('currentModuleId');
+  const postId = localStorage.getItem('currentPostId');
   const [comments, setComments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    // Fetch comments when postId changes
+    if (postId) {
+      fetchComments(postId);
+    }
+  }, [postId]);
+
+  const fetchComments = async (postId) => {
+    try {
+      // Fetch comments for the post
+      const response = await fetch(`/api/getCommentsById?postId=${postId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments');
+      }
+      const commentsData = await response.json();
+      setComments(commentsData);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    }
+  };
+
   useEffect(() => {
     if (router.query && router.query.moduleId) {
       const { moduleId } = router.query;
@@ -48,7 +71,6 @@ const ModulePage = () => {
       throw error; // Re-throw the error to be handled by the caller
     }
   }
-  
 
   useEffect(() => {
     const getUsernameFromCookies = () => {
@@ -78,7 +100,7 @@ const ModulePage = () => {
   
         const { user } = await res.json();
         if (user && user.length > 0) {
-          const userInfo = user[0]; 
+          const userInfo = user[0]; // Assuming the result is an array with a single user object
   
           setEmail(userInfo.email);
         }
@@ -259,28 +281,11 @@ const onCommentUpdate = async (commentId, newContent) => {
   }
 };
 
-
-const handleViewPost = (post, viewInModal = false) => {
-  if (viewInModal) {
-    // If viewInModal is true, fetch comments and open a modal
-    setSelectedPost(post);
-    setIsModalOpen(true);
-    fetchCommentsForPost(post._id);
-  } else {
-    // If viewInModal is false, navigate to the post detail page
-    router.push(`/posts/${post._id}`);
+const handleViewPost = (postId) => {
+  if (typeof window !=='undefined'){
+    postId = localStorage.setItem('currentPostId', postId);
   }
-};
-
-const fetchCommentsForPost = (postId) => {
-  fetch(`/api/getCommentsById?postId=${postId}`)
-    .then((res) => res.json())
-    .then((comments) => {
-      setComments(comments);
-    })
-    .catch((error) => {
-      console.error('Error fetching comments:', error);
-    });
+  router.push(`/posts/${postId}`);
 };
 
 const closeModal = () => {
@@ -288,8 +293,6 @@ const closeModal = () => {
   setSelectedPost(null);
   setComments([]);
 };
-
-
 
 const handleDeleteComment = async (commentId) => {
   try {
