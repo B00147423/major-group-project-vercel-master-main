@@ -281,7 +281,7 @@ const CommentPage = () => {
         </Box>
             <div className="modal-backdrop">
               <div className="modal-content">
-                <button onClick={closeModal} className="modal-close-button">X</button>
+                
                 <h2>{selectedPost?.title}</h2>
                 <p>{selectedPost?.content}</p>
                 <hr/>
