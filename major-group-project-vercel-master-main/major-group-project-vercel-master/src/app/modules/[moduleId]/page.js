@@ -6,11 +6,25 @@ import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
 import Comment from '../../Components/Comments';
 
-const ModulePage = () => {
-  const [moduleInfo, setModuleInfo] = useState({});
-  const [threads, setThreads] = useState([]);
-  const [posts, setPosts] = useState([]);
-  const [announcements, setAnnouncements] = useState([]);
+export async function getServerSideProps(context) {
+  // Fetch data from your API endpoints
+  const moduleId = context.query.moduleId;
+  const [moduleInfo, threads, posts, announcements] = await Promise.all([
+    fetchModuleDetails(moduleId),
+    fetchPostsForModule(moduleId),
+    fetchAnnouncementsForModule(moduleId),
+  ]);
+
+  // Set cache-control header to disable caching
+  context.res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+
+  // Return data as props
+  return {
+    props: { moduleInfo, threads, posts, announcements }
+  };
+}
+
+const ModulePage = ({ moduleInfo, threads, posts, announcements }) => {
   const [username, setUsername] = useState('');
   const router = useRouter();
   const moduleId = localStorage.getItem('currentModuleId');
@@ -18,6 +32,7 @@ const ModulePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [email, setEmail] = useState('');
+
   useEffect(() => {
     if (router.query && router.query.moduleId) {
       const { moduleId } = router.query;
