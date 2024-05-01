@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material"; // Import Typography from Material-UI
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
-import styles from '../css/Comment.module.css';
+import styles from '../../css/Comment.module.css';
 const CommentPage = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySubmit, currentUser }) => {
 
       const [isEditing, setIsEditing] = useState(false);
