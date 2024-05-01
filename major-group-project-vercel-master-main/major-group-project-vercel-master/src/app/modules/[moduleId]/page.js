@@ -187,9 +187,8 @@ const ModulePage = () => {
         // Fetch comments again to update immediately
         fetchComments(postId);
   
-        // Refresh the popup by closing and reopening it
-        closeModal();
-        handleViewPost(selectedPost);
+        // Refresh the page after submission
+      router.reload(); // Add this line to refresh the page
       }
     } catch (error) {
       console.error('Error creating post:', error);
