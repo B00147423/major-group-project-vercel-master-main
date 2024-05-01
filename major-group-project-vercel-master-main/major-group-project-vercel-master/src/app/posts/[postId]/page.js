@@ -320,7 +320,6 @@ const CommentPage = () => {
                 </Box>
               </div>
             </div>
-         )}
         {/* Header for comments */}
         <h2>Comments</h2>
         {/* Display all comments */}
