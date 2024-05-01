@@ -1,4 +1,5 @@
 // Comment.js
+"use client"
 import React, { useState } from 'react';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import styles from '../../css/Comment.module.css';
