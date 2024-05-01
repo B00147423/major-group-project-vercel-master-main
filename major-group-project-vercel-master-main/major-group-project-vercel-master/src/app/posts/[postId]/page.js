@@ -20,18 +20,19 @@ const CommentPage = () => {
     }, [postId]);
   
     const fetchComments = async () => {
-      try {
-        const response = await fetch(`/api/getCommentsById?postId=${postId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch comments');
+        try {
+          const response = await fetch(`/api/getCommentsById?postId=${postId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch comments');
+          }
+          const data = await response.json();
+          setComments(data);
+          // Set the selectedPost based on the fetched data
+          setSelectedPost(data.length > 0 ? data[0] : null);
+        } catch (error) {
+          console.error('Error fetching comments:', error);
         }
-        const data = await response.json();
-        setComments(data);
-      } catch (error) {
-        console.error('Error fetching comments:', error);
-      }
-    };
-  
+      };
     useEffect(() => {
       const getUsernameFromCookies = () => {
         const allCookies = document.cookie.split('; ');

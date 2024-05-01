@@ -4,7 +4,7 @@ import { Button, TextField, Typography } from '@mui/material';
 import styles from '../css/Comment.module.css';
 
 
-const Comment = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySubmit, currentUser }) => {
+const Comment = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [replyContent, setReplyContent] = useState('');
