@@ -279,8 +279,6 @@ const CommentPage = () => {
             Submit
           </Button>
         </Box>
-
-        {isModalOpen && (
             <div className="modal-backdrop">
               <div className="modal-content">
                 <button onClick={closeModal} className="modal-close-button">X</button>
@@ -320,7 +318,7 @@ const CommentPage = () => {
                 </Box>
               </div>
             </div>
-          )}
+         
         {/* Header for comments */}
         <h2>Comments</h2>
         {/* Display all comments */}
