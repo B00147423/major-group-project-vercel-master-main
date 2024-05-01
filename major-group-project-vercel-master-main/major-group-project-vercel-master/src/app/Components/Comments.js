@@ -2,7 +2,7 @@
 "use client"
 import React, { useState } from 'react';
 import { Button, Box, TextField, Typography } from "@mui/material";
-import styles from '../../css/Comment.module.css';
+import styles from '../css/Comment.module.css';
 
 const Comment = ({ comment, currentUser, onCommentUpdate, onReplySubmit, onDeleteComment }) => {
   const [isEditing, setIsEditing] = useState(false);

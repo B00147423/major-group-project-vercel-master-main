@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import Comment from '../../Components/Comments';
 import Layout from '../../Components/Layout';
-import '../../css/modulePage.css';
+
 
 const CommentPage = () => {
   const [comments, setComments] = useState([]);
