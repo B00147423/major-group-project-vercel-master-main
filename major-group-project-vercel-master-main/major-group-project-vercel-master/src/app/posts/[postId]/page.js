@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
@@ -207,15 +206,21 @@ const CommentPage = () => {
   };
 
   const handleSubmitReply = async () => {
-    const success = await onReplySubmit(comment._id, replyContent);
-    if (success) {
-      setReplyContent('');
-      setIsReplying(false);
-    } else {
+    try {
+      const success = await handleReplySubmit(comment._id, replyContent);
+      if (success) {
+        setReplyContent('');
+        setIsReplying(false);
+      } else {
+        alert('Failed to submit reply.');
+      }
+    } catch (error) {
+      console.error('Error handling reply submission:', error);
       alert('Failed to submit reply.');
     }
   };
 
+  
   const handleCancelReply = () => {
     setReplyContent('');
     setIsReplying(false);
@@ -242,9 +247,14 @@ const CommentPage = () => {
     await onCommentUpdate(comment._id, editedContent);
   };
 
-  const handleDelete = () => {
-    // Call the onDeleteComment function with the comment ID
-    onDeleteComment(comment._id);
+  const handleDelete = async () => {
+    try {
+      // Call the onDeleteComment function with the comment ID
+      await handleDeleteComment(comment._id);
+    } catch (error) {
+      console.error('Error handling comment deletion:', error);
+      alert('Failed to delete comment.');
+    }
   };
 
   return (
@@ -345,4 +355,3 @@ const CommentPage = () => {
 };
 
 export default CommentPage;
-
