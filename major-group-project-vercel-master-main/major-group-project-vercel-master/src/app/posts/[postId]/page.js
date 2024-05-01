@@ -1,142 +1,53 @@
-"use client";
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button, Box, TextField, Typography } from "@mui/material"; // Import Typography from Material-UI
+import { useRouter } from 'next/router';
+import { Button, Box, TextField, Typography } from "@mui/material";
 import Layout from '../../Components/Layout';
-import '../../css/modulePage.css';
-import styles from '../../css/Comment.module.css';
-const CommentPage = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySubmit, currentUser }) => {
+import '../../css/Comment.module.css';
 
-      const [isEditing, setIsEditing] = useState(false);
-      const [editedContent, setEditedContent] = useState(comment.content);
-      const [replyContent, setReplyContent] = useState('');
-      const [isReplying, setIsReplying] = useState(false);
-    
-      const lastReply = comment.replies?.slice(-1)[0] || {};
-      const userHasLastReply = lastReply.poster === currentUser;
-      const allowReply = !userHasLastReply || comment.replies?.length === 0;
-    
-      const handleEdit = () => {
-        setIsEditing(true);
-        setEditedContent(comment.content);
-      };
-    
-      const handleReplyChange = (event) => {
-        setReplyContent(event.target.value);
-      };
-    
-      const handleCancelEdit = () => {
-        setIsEditing(false);
-        setEditedContent(comment.content);
-      };
-    
-      const handleSubmitReply = async () => {
-        const success = await onReplySubmit(comment._id, replyContent);
-        if (success) {
-            setReplyContent('');
-            setIsReplying(false);
-        } else {
-            alert('Failed to submit reply.');
-        }
-      };
-    
-      const handleCancelReply = () => {
-        setReplyContent('');
-        setIsReplying(false);
-      };
-    
-      const submitReply = () => {
-        if (replyContent.trim() === '') {
-          // Don't submit empty replies
-          return;
-        }
-        onReplySubmit(comment._id, replyContent);
-        setReplyContent(''); // Clear the input field
-        setIsReplying(false); // Hide the reply input field
-      };
-    
-      const handleSaveEdit = async () => {
-        if (editedContent.trim() === '') {
-          // Content cannot be empty
-          return;
-        }
-    
-        setIsEditing(false);
-        // Call the onCommentUpdate function with the updated content
-        await onCommentUpdate(comment._id, editedContent);
-      };
-    
-      const handleDelete = () => {
-        // Call the onDeleteComment function with the comment ID
-        onDeleteComment(comment._id);
-      };
-    
-      return (
-        <div className={styles['comment-container']}>
-          <div className={styles['comment-header']}>
-            <Typography variant="subtitle1" component="span">
-              {comment.poster}
-            </Typography>
-            {comment.editedAt && (
-              <Typography variant="caption" color="textSecondary" component="span">
-                {' (edited at ' + new Date(comment.editedAt).toLocaleString() + ')'}
-              </Typography>
-            )}
-          </div>
-          <div className={styles['comment-content']}>
-            {isEditing ? (
-              <TextField
-                multiline
-                fullWidth
-                variant="outlined"
-                value={editedContent}
-                onChange={(e) => setEditedContent(e.target.value)}
-              />
-            ) : (
-              <Typography variant="body1">{comment.content}</Typography>
-            )}
-          </div>
-          {currentUser === comment.poster && !isEditing && (
-            <div className={styles['comment-actions']}>
-              <Button onClick={handleEdit} className={styles['action-btn']}>Edit</Button>
-              <Button onClick={handleDelete} className={styles['action-btn']}>Delete</Button>
-            </div>
-          )}
-          {currentUser !== comment.poster && !isEditing && !isReplying && allowReply && (
-            <div className={styles['comment-actions']}>
-              <Button onClick={() => setIsReplying(true)} className={styles['action-btn']}>Reply</Button>
-            </div>
-          )}
-          {isEditing && (
-            <div className={styles['comment-actions']}>
-              <Button onClick={handleSaveEdit} className={styles['save-btn']}>Save</Button>
-              <Button onClick={handleCancelEdit} className={styles['cancel-btn']}>Cancel</Button>
-            </div>
-          )}
-          {isReplying && (
-            <div className={styles['reply-section']}>
-              <TextField
-                multiline
-                fullWidth
-                variant="outlined"
-                value={replyContent}
-                onChange={handleReplyChange}
-                placeholder="Write a reply..."
-              />
-              <div className={styles['reply-actions']}>
-                <Button onClick={handleSubmitReply} className={styles['action-btn']}>Submit Reply</Button>
-                <Button onClick={handleCancelReply} className={styles['action-btn']}>Cancel</Button>
-              </div>
-            </div>
-          )}
-          {comment.replies && comment.replies.map((reply, index) => (
-            <div key={index} style={{ marginLeft: '20px' }}>
-              <Typography variant="body1">
-                <strong>{reply.poster}</strong>: {reply.content}
-              </Typography>
+const CommentPage = () => {
+  const router = useRouter();
+  const [post, setPost] = useState({});
+  const [comments, setComments] = useState([]);
+
+  // Fetch the post and comments based on postId from the URL
+  useEffect(() => {
+    const fetchPostDetails = async () => {
+      const postId = router.query.postId; // Retrieve postId from URL
+      if (!postId) return;
+
+      try {
+        const postResponse = await fetch(`/api/getPostDetails?postId=${postId}`);
+        if (!postResponse.ok) throw new Error('Failed to fetch post details');
+        const postData = await postResponse.json();
+        setPost(postData.post);
+
+        const commentsResponse = await fetch(`/api/getComments?postId=${postId}`);
+        if (!commentsResponse.ok) throw new Error('Failed to fetch comments');
+        const commentsData = await commentsResponse.json();
+        setComments(commentsData.comments);
+      } catch (error) {
+        console.error('Error fetching post details:', error);
+      }
+    };
+
+    fetchPostDetails();
+  }, [router.query.postId]); // React on changes to postId in the URL
+
+  return (
+    <Layout>
+      <div className='container'>
+        <Typography variant="h4">{post.title}</Typography>
+        <Typography paragraph>{post.content}</Typography>
+        <Box>
+          {comments.map((comment, index) => (
+            <div key={index}>
+              <Typography>{comment.username}: {comment.content}</Typography>
             </div>
           ))}
-        </div>
-      );
-    };
+        </Box>
+      </div>
+    </Layout>
+  );
+};
+
 export default CommentPage;
