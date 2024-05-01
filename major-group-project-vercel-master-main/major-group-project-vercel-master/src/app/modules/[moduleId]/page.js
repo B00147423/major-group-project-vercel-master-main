@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { Button, Box, TextField } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
-import Comment from '../../Components/Comments';
 
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
@@ -259,18 +258,8 @@ const onCommentUpdate = async (commentId, newContent) => {
   }
 };
 
-const handleViewPost = (post) => {
-
-  setSelectedPost(post);
-  setIsModalOpen(true);
-  fetch(`/api/getCommentsById?postId=${post._id}`)
-  .then((res) => res.json())
-  .then((comments) => {
-    setComments(comments);
-  })
-  .catch((error) => {
-    console.error('Error fetching comments:', error);
-  });
+const handleViewPost = (postId) => {
+  router.push(`/posts/${postId}`);
 };
 
 const closeModal = () => {
@@ -361,8 +350,8 @@ return (
                 <h4>Creator: {post.poster}</h4>
                 <h4>{post.title}</h4>
                 <p>{post.content}</p>
-                <button onClick={() => handleViewPost(post)}>
-                  View Post
+                <button onClick={() => handleViewPost(post._id)}>
+                  View Comments
                 </button>
                 {/* Add delete button */}
                 {(username === post.poster || email === moduleInfo.lecturer || email === moduleInfo.moderator) && (
