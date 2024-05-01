@@ -285,6 +285,7 @@ const CommentPage = () => {
                 <h2>{selectedPost?.title}</h2>
                 <p>{selectedPost?.content}</p>
                 <hr/>
+                {selectedPost && (
                 <div className="forum-container">
                   <h3>Comments:</h3>
                   <div className="comment-list">
@@ -303,6 +304,7 @@ const CommentPage = () => {
                       ))}
                 </div>
                 </div>
+                )}
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
                 <p>{username}</p> {/* Display username here */}
                   <TextField
@@ -318,7 +320,7 @@ const CommentPage = () => {
                 </Box>
               </div>
             </div>
-         
+         )}
         {/* Header for comments */}
         <h2>Comments</h2>
         {/* Display all comments */}
