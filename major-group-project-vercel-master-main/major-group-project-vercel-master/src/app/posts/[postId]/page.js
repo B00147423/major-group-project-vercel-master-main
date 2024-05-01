@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material";
-import Comment from './Comment';
+import Comment from '../../Components/Comments';
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
 
