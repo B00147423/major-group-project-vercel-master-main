@@ -25,7 +25,29 @@ const CommentPage = () => {
     getUsernameFromCookies();
     fetchUserInfo();
   }, []);
-
+  async function runDBCallAsync(url, formData){
+    try {
+      const res = await fetch(url, {
+        method: 'POST', // Use POST method
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      // Check if the HTTP status code is OK (200-299)
+      if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+      }
+  
+      const data = await res.json(); // Parse the JSON in the response
+  
+      return data; // Return the parsed JSON data
+    } catch (error) {
+      // If an error occurs, log it to the console
+      console.error("Error during fetch: ", error);
+      throw error; // Re-throw the error to be handled by the caller
+    }
+  }
   const fetchComments = async () => {
     try {
       // Make a GET request to your API endpoint
