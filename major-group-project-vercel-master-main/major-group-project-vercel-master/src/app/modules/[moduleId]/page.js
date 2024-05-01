@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button, Box, TextField } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
-
+import CommentPage from './CommentPage'; 
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
   const [threads, setThreads] = useState([]);
