@@ -282,7 +282,24 @@ const CommentPage = () => {
 
         {/* Header for comments */}
         <h2>Comments</h2>
-        {/* Display all comments */}
+        {/* Render comments using the Comment component */}
+        <div className="comment-list">
+          {comments
+            .filter((comment) => comment.postId === selectedPost._id)
+            .map((comment, index) => (
+              <Comment
+                key={comment._id || index}
+                comment={comment}
+                onCommentUpdate={onCommentUpdate}
+                onReplySubmit={handleReplySubmit}
+                onDeleteComment={handleDeleteComment} 
+                currentUser={username}
+                id={`comment-${comment._id || index}`}
+              />
+            ))}
+        </div>
+
+        {/* Display all comments directly */}
         <div className="comment-list">
           {comments
             .filter((comment) => comment.postId === postId)
@@ -322,5 +339,6 @@ const CommentPage = () => {
   );
 };
 
+// Export the CommentPage component
 export default CommentPage;
 
