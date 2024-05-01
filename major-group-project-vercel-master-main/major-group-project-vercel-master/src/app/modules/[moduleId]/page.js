@@ -5,7 +5,6 @@ import { Button, Box, TextField } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
 
-
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
   const [threads, setThreads] = useState([]);
@@ -371,24 +370,7 @@ return (
                 <h2>{selectedPost?.title}</h2>
                 <p>{selectedPost?.content}</p>
                 <hr/>
-                <div className="forum-container">
-                  <h3>Comments:</h3>
-                  <div className="comment-list">
-                  {comments
-                      .filter((comment) => comment.postId === selectedPost._id)
-                      .map((comment, index) => (
-                        <Comment
-                        key={comment._id || index}
-                        comment={comment}
-                        onCommentUpdate={onCommentUpdate}
-                        onReplySubmit={handleReplySubmit}
-                        onDeleteComment={handleDeleteComment} // Pass the onDeleteComment function
-                        currentUser={username}
-                        id={`comment-${comment._id || index}`}
-                    />
-                      ))}
-                </div>
-                </div>
+
                 <Box component="form" onSubmit={handleSubmit} noValidate sx={{mt: 1}}>
                 <p>{username}</p> {/* Display username here */}
                   <TextField
