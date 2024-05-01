@@ -48,6 +48,7 @@ const ModulePage = () => {
       throw error; // Re-throw the error to be handled by the caller
     }
   }
+  
 
   useEffect(() => {
     const getUsernameFromCookies = () => {
@@ -77,7 +78,7 @@ const ModulePage = () => {
   
         const { user } = await res.json();
         if (user && user.length > 0) {
-          const userInfo = user[0]; // Assuming the result is an array with a single user object
+          const userInfo = user[0]; 
   
           setEmail(userInfo.email);
         }
@@ -258,8 +259,28 @@ const onCommentUpdate = async (commentId, newContent) => {
   }
 };
 
-const handleViewPost = (postId) => {
-  router.push(`/posts/${postId}`);
+
+const handleViewPost = (post, viewInModal = false) => {
+  if (viewInModal) {
+    // If viewInModal is true, fetch comments and open a modal
+    setSelectedPost(post);
+    setIsModalOpen(true);
+    fetchCommentsForPost(post._id);
+  } else {
+    // If viewInModal is false, navigate to the post detail page
+    router.push(`/posts/${post._id}`);
+  }
+};
+
+const fetchCommentsForPost = (postId) => {
+  fetch(`/api/getCommentsById?postId=${postId}`)
+    .then((res) => res.json())
+    .then((comments) => {
+      setComments(comments);
+    })
+    .catch((error) => {
+      console.error('Error fetching comments:', error);
+    });
 };
 
 const closeModal = () => {
@@ -267,6 +288,8 @@ const closeModal = () => {
   setSelectedPost(null);
   setComments([]);
 };
+
+
 
 const handleDeleteComment = async (commentId) => {
   try {
