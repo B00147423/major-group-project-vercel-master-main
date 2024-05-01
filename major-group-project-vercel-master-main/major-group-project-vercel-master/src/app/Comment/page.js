@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import { Button, TextField, Typography } from '@mui/material';
 import styles from '../css/Comment.module.css';
