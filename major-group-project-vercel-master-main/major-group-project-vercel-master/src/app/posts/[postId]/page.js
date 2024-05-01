@@ -341,7 +341,7 @@ const CommentPage = () => {
                 </form>
               )}
 {comments
-  .filter((comment) => comment.postId === selectedPost._id) // Filter comments based on the selected post ID
+  .filter((comment) => comment.postId === selectedPost?.postId) // Filter comments based on the selected post ID
   .map((comment, index) => (
     <Comment
       key={comment._id || index}
