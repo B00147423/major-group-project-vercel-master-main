@@ -340,15 +340,15 @@ const CommentPage = () => {
                   </Button>
                 </form>
               )}
-{selectedPost && comments
-  .filter((comment) => comment.postId === selectedPost._id)
+{comments
+  .filter((comment) => comment.postId === selectedPost._id) // Filter comments based on the selected post ID
   .map((comment, index) => (
     <Comment
       key={comment._id || index}
       comment={comment}
       onCommentUpdate={onCommentUpdate}
       onReplySubmit={handleReplySubmit}
-      onDeleteComment={handleDeleteComment} // Pass the onDeleteComment function
+      onDeleteComment={handleDeleteComment}
       currentUser={username}
       id={`comment-${comment._id || index}`}
     />
