@@ -4,7 +4,7 @@ import { Button, TextField, Typography } from '@mui/material';
 import styles from '../css/Comment.module.css';
 
 
-const Comment = () => {
+const Comment = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySubmit, currentUser }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [replyContent, setReplyContent] = useState('');
@@ -68,103 +68,10 @@ const Comment = () => {
     // Call the onDeleteComment function with the comment ID
     onDeleteComment(comment._id);
   };
-  const onCommentUpdate = async (commentId, newContent) => {
-    try {
-      // Call the API to update the comment
-      const response = await fetch(`/api/updateComment`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ commentId, content: newContent }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update comment');
-      }
-  
-      // Update the comment in the local state to reflect the changes immediately
-      setComments(prevComments =>
-        prevComments.map(comment =>
-          comment._id === commentId ? { ...comment, content: newContent, editedAt: new Date().toISOString() } : comment
-        )
-      );
-  
-    } catch (error) {
-      console.error('Error updating comment:', error.message);
-    }
-  };
-
-  const handleDeletePost = async (postId) => {
-    try {
-      const response = await fetch(`/api/deletePost?postId=${postId}`, {
-        method: 'DELETE',
-      });
-  
-      if (response.ok) {
-        console.log('Post deleted successfully');
-        setPosts(prevPosts => prevPosts.filter(post => post._id !== postId));
-      } else {
-        console.error('Failed to delete post');
-      }
-    } catch (error) {
-      console.error('Error deleting post:', error);
-    }
-  };
-
-  const handleReplySubmit = async (parentCommentId, replyContent) => {
-    const url = `/api/postReply?parentCommentId=${parentCommentId}&poster=${username}&content=${replyContent}&timestamp=${new Date().toISOString()}`;
-  
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to submit reply');
-      }
-  
-      const newReply = { poster: username, content: replyContent, timestamp: new Date().toISOString() };
-      // Update comments state to include new reply
-      setComments(currentComments => currentComments.map(comment => {
-        if (comment._id === parentCommentId) {
-          return {...comment, replies: [...(comment.replies || []), newReply]};
-        }
-        return comment;
-      }));
-  
-      return true;
-    } catch (error) {
-      console.error('Error submitting reply:', error);
-      alert('Failed to submit reply: ' + error.message);
-      return false;
-    }
-  };
-
 
   return (
     <div className={styles['comment-container']}>
       <div className={styles['comment-header']}>
-      <div className="comment-list">
-              {selectedPost && comments
-                .filter((comment) => comment.postId === selectedPost._id)
-                .map((comment, index) => (
-                  <Comment
-                    key={comment._id || index}
-                    comment={comment}
-                    onCommentUpdate={onCommentUpdate}
-                    onReplySubmit={handleReplySubmit}
-                    onDeleteComment={handleDeleteComment}
-                    currentUser={username}
-                    id={`comment-${comment._id || index}`}
-                  />
-                ))}
-            </div>
         <Typography variant="subtitle1" component="span">
           {comment.poster}
         </Typography>
