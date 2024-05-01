@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import Layout from '../../Components/Layout';
-import Comment from '../../Components/Comment'; // Assuming Comment component is located here
 import '../../css/modulePage.css';
 import styles from '../../css/Comment.module.css';
 
