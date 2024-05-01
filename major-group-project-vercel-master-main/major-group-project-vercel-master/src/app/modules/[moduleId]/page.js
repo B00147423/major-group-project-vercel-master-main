@@ -184,11 +184,8 @@ const ModulePage = () => {
         setComments(prevComments => [...prevComments, newComment]);
         event.target.content.value = ''; // Clear the comment input field
         // Fetch comments again to update immediately
-        fetchComments(postId);
-  
-        // Refresh the popup by closing and reopening it
-        closeModal();
-        handleViewPost(selectedPost);
+        
+        setComments(data); // Update the comments state with the fetched comments
       }
     } catch (error) {
       console.error('Error creating post:', error);

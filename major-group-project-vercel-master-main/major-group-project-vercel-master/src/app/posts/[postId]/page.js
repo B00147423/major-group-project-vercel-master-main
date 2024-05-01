@@ -262,16 +262,20 @@ return (
 
         {/* Header for comments */}
         <h2>Comments</h2>
-
         {/* Display all comments */}
         <div className="comment-list">
           {comments
           .filter((comment) => comment.postId === postId)
           .map((comment) => (
-            <div key={comment._id} className="comment">
-              <h4>{comment.poster}</h4>
-              <p>{comment.content}</p>
-            </div>
+            <Comment
+            key={comment._id || index}
+            comment={comment}
+            onCommentUpdate={onCommentUpdate}
+            onReplySubmit={handleReplySubmit}
+            onDeleteComment={handleDeleteComment} // Pass the onDeleteComment function
+            currentUser={username}
+            id={`comment-${comment._id || index}`}
+        />
           ))}
         </div>
       </div>
