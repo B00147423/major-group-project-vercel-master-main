@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { Button, Box, TextField } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
-import styles from './styles.module.css'; 
 const CommentPage = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySubmit, currentUser }) => {
     const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
@@ -61,8 +60,8 @@ const CommentPage = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySu
   };
 
   return (
-    <div className={styles['comment-container']}>
-      <div className={styles['comment-header']}>
+    <div className='comment-container'>
+      <div className='comment-header'>
         <Typography variant="subtitle1" component="span">
           {comment.poster}
         </Typography>
@@ -72,7 +71,7 @@ const CommentPage = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySu
           </Typography>
         )}
       </div>
-      <div className={styles['comment-content']}>
+      <div className='comment-content'>
         {isEditing ? (
           <TextField
             multiline
@@ -86,24 +85,24 @@ const CommentPage = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySu
         )}
       </div>
       {currentUser === comment.poster && !isEditing && (
-        <div className={styles['comment-actions']}>
-          <Button onClick={handleEdit} className={styles['action-btn']}>Edit</Button>
-          <Button onClick={handleDelete} className={styles['action-btn']}>Delete</Button>
+        <div className='comment-actions'>
+          <Button onClick={handleEdit} className='action-btn'>Edit</Button>
+          <Button onClick={handleDelete} className='action-btn'>Delete</Button>
         </div>
       )}
       {currentUser !== comment.poster && !isEditing && !isReplying && allowReply && (
-        <div className={styles['comment-actions']}>
-          <Button onClick={() => setIsReplying(true)} className={styles['action-btn']}>Reply</Button>
+        <div className='comment-actions'>
+          <Button onClick={() => setIsReplying(true)} className='action-btn'>Reply</Button>
         </div>
       )}
       {isEditing && (
-        <div className={styles['comment-actions']}>
-          <Button onClick={handleSaveEdit} className={styles['save-btn']}>Save</Button>
-          <Button onClick={handleCancelEdit} className={styles['cancel-btn']}>Cancel</Button>
+        <div className='comment-actions'>
+          <Button onClick={handleSaveEdit} className='save-btn'>Save</Button>
+          <Button onClick={handleCancelEdit} className='cancel-btn'>Cancel</Button>
         </div>
       )}
       {isReplying && (
-        <div className={styles['reply-section']}>
+        <div className='reply-section'>
           <TextField
             multiline
             fullWidth
@@ -112,9 +111,9 @@ const CommentPage = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySu
             onChange={handleReplyChange}
             placeholder="Write a reply..."
           />
-          <div className={styles['reply-actions']}>
-            <Button onClick={handleSubmitReply} className={styles['action-btn']}>Submit Reply</Button>
-            <Button onClick={handleCancelReply} className={styles['action-btn']}>Cancel</Button>
+          <div className='reply-actions'>
+            <Button onClick={handleSubmitReply} className='action-btn'>Submit Reply</Button>
+            <Button onClick={handleCancelReply} className='action-btn'>Cancel</Button>
           </div>
         </div>
       )}
