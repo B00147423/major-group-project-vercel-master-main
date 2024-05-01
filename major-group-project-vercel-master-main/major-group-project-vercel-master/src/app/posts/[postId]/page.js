@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button, Box, TextField, Typography } from "@mui/material";
 import styles from '../../css/Comment.module.css';
 
-const Comment = () => {
+const CommentPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [replyContent, setReplyContent] = useState('');
@@ -283,4 +283,4 @@ const Comment = () => {
   );
 };
 
-export default Comment;
+export default CommentPage;
