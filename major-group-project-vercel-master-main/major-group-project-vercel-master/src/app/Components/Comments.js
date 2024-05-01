@@ -43,7 +43,15 @@ const Comment = ({ comment = {}, onCommentUpdate, onDeleteComment, onReplySubmit
     setIsReplying(false);
   };
 
-
+  const submitReply = () => {
+    if (replyContent.trim() === '') {
+      // Don't submit empty replies
+      return;
+    }
+    onReplySubmit(comment._id, replyContent);
+    setReplyContent(''); // Clear the input field
+    setIsReplying(false); // Hide the reply input field
+  };
 
   const handleSaveEdit = async () => {
     if (editedContent.trim() === '') {
