@@ -5,7 +5,6 @@ import { Button, Box, TextField } from "@mui/material";
 import Layout from '../../Components/Layout';
 import '../../css/modulePage.css';
 
-
 const ModulePage = () => {
   const [moduleInfo, setModuleInfo] = useState({});
   const [threads, setThreads] = useState([]);
@@ -260,6 +259,7 @@ const onCommentUpdate = async (commentId, newContent) => {
 };
 
 const handleViewPost = (postId) => {
+  localStorage.setItem('currentPostId', postId);
   router.push(`/posts/${postId}`);
 };
 
