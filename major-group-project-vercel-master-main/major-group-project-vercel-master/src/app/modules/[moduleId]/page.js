@@ -188,13 +188,12 @@ const ModulePage = () => {
         fetchComments(postId);
   
         // Refresh the page after submission
-      router.reload(); // Add this line to refresh the page
+        router.reload(); // Add this line to refresh the page
       }
     } catch (error) {
       console.error('Error creating post:', error);
     }
   };
-
 
   const handleReplySubmit = async (parentCommentId, replyContent) => {
     const url = `/api/postReply?parentCommentId=${parentCommentId}&poster=${username}&content=${replyContent}&timestamp=${new Date().toISOString()}`;
@@ -229,34 +228,33 @@ const ModulePage = () => {
     }
   };
 
-const onCommentUpdate = async (commentId, newContent) => {
-  try {
-    // Call the API to update the comment
-    const response = await fetch(`/api/updateComment`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ commentId, content: newContent }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to update comment');
+  const onCommentUpdate = async (commentId, newContent) => {
+    try {
+      // Call the API to update the comment
+      const response = await fetch(`/api/updateComment`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ commentId, content: newContent }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update comment');
+      }
+  
+      // Update the comment in the local state to reflect the changes immediately
+      setComments(prevComments =>
+        prevComments.map(comment =>
+          comment._id === commentId ? { ...comment, content: newContent, editedAt: new Date().toISOString() } : comment
+        )
+      );
+  
+    } catch (error) {
+      console.error('Error updating comment:', error.message);
     }
-
-    // Update the comment in the local state to reflect the changes immediately
-    setComments(prevComments =>
-      prevComments.map(comment =>
-        comment._id === commentId ? { ...comment, content: newContent, editedAt: new Date().toISOString() } : comment
-      )
-    );
-
-
-  } catch (error) {
-    console.error('Error updating comment:', error.message);
-  }
-};
+  };
 
 const handleViewPost = (post) => {
 
@@ -287,10 +285,15 @@ const handleDeleteComment = async (commentId) => {
     });
 
     if (response.ok) {
-      // If the deletion was successful, update the state or perform any other necessary actions
+      // If the deletion was successful, fetch the updated comments from the server
+      const updatedCommentsResponse = await fetch(`/api/getComments`); // Assuming there's an endpoint to fetch comments
+      if (!updatedCommentsResponse.ok) {
+        throw new Error('Failed to fetch updated comments');
+      }
+      const updatedCommentsData = await updatedCommentsResponse.json();
+      // Update the comments state with the updated comments fetched from the server
+      setComments(updatedCommentsData.comments || []);
       console.log('Comment deleted successfully');
-      // Remove the deleted comment from the comments state
-      setComments(prevComments => prevComments.filter(comment => comment._id !== commentId));
     } else {
       // If there was an error deleting the comment, handle it accordingly
       console.error('Failed to delete comment');
@@ -299,6 +302,7 @@ const handleDeleteComment = async (commentId) => {
     console.error('Error deleting comment:', error);
   }
 };
+
 
 const handleDeletePost = async (postId) => {
   try {
